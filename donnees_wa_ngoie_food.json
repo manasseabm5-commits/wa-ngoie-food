@@ -1,0 +1,150 @@
+[
+    {
+        "balise": "li",
+        "contenu": "Migrate to Render"
+    },
+    {
+        "balise": "h1",
+        "contenu": "Your fastest path to production for"
+    },
+    {
+        "balise": "h2",
+        "contenu": "Click, click, done."
+    },
+    {
+        "balise": "h3",
+        "contenu": "Select a service"
+    },
+    {
+        "balise": "p",
+        "contenu": "Choose what you need to run your apps, APIs, agent logic, databases, cron jobs, and more."
+    },
+    {
+        "balise": "h3",
+        "contenu": "Deploy your code"
+    },
+    {
+        "balise": "p",
+        "contenu": "Just connect your repo. Render deploys on the right runtime for your framework."
+    },
+    {
+        "balise": "h3",
+        "contenu": "Render does the rest"
+    },
+    {
+        "balise": "p",
+        "contenu": "Get instant networking, scaling, previews, deploys, rollbacks, and monitoring."
+    },
+    {
+        "balise": "h3",
+        "contenu": "Deploy apps and agents\nwithzero ops"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Intuitive hosting and private networking forweb services,Postgres databases,cron jobs,workflows,static sites,background jobs,key value stores,private services,WebSockets,edge caches,isolated environments,"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Full-stack previews for every pull request"
+    },
+    {
+        "balise": "p",
+        "contenu": "Iterate quickly with ephemeral previews of your entire application architecture for every change."
+    },
+    {
+        "balise": "h3",
+        "contenu": "Load-based autoscaling that handles 100x traffic bursts and beyond"
+    },
+    {
+        "balise": "p",
+        "contenu": "Keep your workloads running smoothly through viral moments, seasonal spikes, and launch days."
+    },
+    {
+        "balise": "h3",
+        "contenu": "Durable, long-running workflows as code"
+    },
+    {
+        "balise": "p",
+        "contenu": "Deploy reliable agents and background processes at scale, without wiring up queues, workers, and retry logic."
+    },
+    {
+        "balise": "h3",
+        "contenu": "Enterprise-grade Postgres databases"
+    },
+    {
+        "balise": "p",
+        "contenu": "Deploy fully-managed databases with point-in-time recovery, read replicas, and high availability."
+    },
+    {
+        "balise": "h3",
+        "contenu": "Integrated logs and monitoring for builds, deploys and live services"
+    },
+    {
+        "balise": "p",
+        "contenu": "See critical metrics for all of your Render infrastructure from day zero, and stream telemetry to external tools."
+    },
+    {
+        "balise": "h2",
+        "contenu": "Intuitive infrastructure, \ndesigned for builders"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Native language runtimes"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Infrastructure as code"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Isolated environments"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Object storage"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Redis-compatible Key Value"
+    },
+    {
+        "balise": "h3",
+        "contenu": "WebSockets"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Edge caching"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Fully-managed TLS"
+    },
+    {
+        "balise": "h2",
+        "contenu": "Stay secure and\nresilient by default"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Private networking"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Built-in DDoS protection"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Managed compliance"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Audit controls"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Encryption at rest"
+    },
+    {
+        "balise": "h3",
+        "contenu": "Unique user identification"
+    }
+]

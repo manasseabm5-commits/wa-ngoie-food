@@ -28,5 +28,10 @@
         "input": "d'accord",
         "reponse": "Non compris par l'IA",
         "date": "2026-06-21 17:34:43.812893"
+    },
+    {
+        "input": "HEY",
+        "reponse": "Non compris par l'IA",
+        "date": "2026-06-21 21:49:42.575073"
     }
 ]
