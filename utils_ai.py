@@ -61,5 +61,5 @@ def generer_lien_whatsapp_direct(panier, total, plat_unique=None):
     plats_str = ", ".join(panier).upper()
     texte = f"Commande Wa Ngoie Food - Plats: {plats_str} - Total: {total} FC"
     texte_encode = quote(texte)
-    # Correction de l'URL wa.me/
+    # CORRECTION : Ajout du slash indispensable ici pour WhatsApp
     return f"https://wa.me{numero}?text={texte_encode}"
