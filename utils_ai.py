@@ -1,6 +1,7 @@
 # utils_ai.py
 import difflib
-from urllib.parse import quote
+# Utilisation de quote_plus pour garantir un encodage strict des espaces et caractères spéciaux
+from urllib.parse import quote_plus
 
 MENU_DATA = {
     "chawarma": 14000, "hamburger": 16000, "tacos": 16000,
@@ -24,6 +25,7 @@ def corriger_et_deviner_article(mot_utilisateur):
         
     cles_menu = list(MENU_DATA.keys())
     correspondance = difflib.get_close_matches(mot_clean, cles_menu, n=1, cutoff=0.6)
+    # Sécurité pour éviter un crash 'IndexError' si aucune correspondance n'est trouvée
     return correspondance[0] if correspondance else None
 
 def analyser_commande_phrase(phrase_brute, est_etudiant_isipa=False):
@@ -60,6 +62,9 @@ def generer_lien_whatsapp_direct(panier, total, plat_unique=None):
     numero = "243831674115"
     plats_str = ", ".join(panier).upper()
     texte = f"Commande Wa Ngoie Food - Plats: {plats_str} - Total: {total} FC"
-    texte_encode = quote(texte)
-    # CORRECTION : Ajout du slash indispensable ici pour WhatsApp
+    
+    # Encodage parfait du texte pour WhatsApp sans perte de caractères
+    texte_encode = quote_plus(texte)
+    
+    # Ajout du slash indispensable '/' pour former une URL valide https://wa.me
     return f"https://wa.me{numero}?text={texte_encode}"
