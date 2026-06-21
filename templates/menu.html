@@ -140,7 +140,6 @@
             <img src="{{ url_for('static', filename='images/biere.jpg') }}" alt="Bière">
             <div class="card-info">
                 <h4>Bière locale</h4>
-                <!-- OPTION MISE À JOUR : Prix corrigé à 8.000 FC -->
                 <p class="price">8.000 FC</p>
                 <button onclick="executerCommandeDirecte(this)" class="btn-action btn-wa" style="width: 100%; border: none;">🟢 Commander</button>
             </div>
@@ -154,7 +153,6 @@
     </div>
 </div>
 
-<!-- LOGIQUE SÉCURISÉE DIRECTE SANS INTERCEPTION DE SOURIS FAUSSÉE -->
 <script>
     function executerCommandeDirecte(bouton) {
         const numeroAdmin = "243831674115";
@@ -166,15 +164,8 @@
         const messageEncode = encodeURIComponent(messageBrut);
         
         const estMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        let urlFinale = "";
+        let urlFinale = estMobile ? "whatsapp://send?phone=" + numeroAdmin + "&text=" + messageEncode : "https://whatsapp.com" + numeroAdmin + "&text=" + messageEncode;
         
-        if (estMobile) {
-            urlFinale = "whatsapp://send?phone=" + numeroAdmin + "&text=" + messageEncode;
-        } else {
-            urlFinale = "https://api.whatsapp.com/send?phone=" + numeroAdmin + "&text=" + messageEncode;
-        }
-        
-        console.log("Transmission vers la cuisine : " + urlFinale);
         window.open(urlFinale, '_blank');
     }
 </script>
