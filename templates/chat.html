@@ -60,7 +60,8 @@
                 <label for="imageInput" style="cursor: pointer; font-size: 20px; color: #c4c7c5; user-select: none;" title="Joindre une photo">📎</label>
                 <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="afficherApercuImage(this)">
                 
-                <input type="text" id="userInput" placeholder="Formulez votre commande ici (ex: Je veux 2 chawarmas et 1 frites)..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                <!-- CORRECTION : Ajout des attributs mobiles natifs et retrait de l'écouteur inline onkeypress instable -->
+                <input type="text" id="userInput" autocomplete="off" autocapitalize="sentences" spellcheck="true" placeholder="Formulez votre commande ici (ex: Je veux 2 chawarmas et 1 frites)...">
                 
                 <button onclick="sendMessage()" style="background: transparent; border: none; color: #d4af37; font-size: 20px; cursor: pointer; font-weight: bold;" title="Envoyer">➔</button>
             </div>
@@ -69,4 +70,21 @@
 </div>
 
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+<!-- CORRECTION CLAVIER MOBILE : Écouteur strict injecté de manière isolée pour libérer la barre d'espace -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const userInput = document.getElementById('userInput');
+        if (userInput) {
+            userInput.addEventListener('keydown', function(event) {
+                // Intercepte UNIQUEMENT le bouton d'envoi virtuel ou la touche Entrée matérielle (Code 13)
+                if (event.key === 'Enter' || event.keyCode === 13) {
+                    event.preventDefault(); // Empêche l'exécution d'événements superposés indésirables
+                    sendMessage(); // Exécute l'envoi du message propre
+                }
+                // Toutes les autres touches (y compris Espace / Code 32) conservent leur comportement natif
+            });
+        }
+    });
+</script>
 {% endblock %}
