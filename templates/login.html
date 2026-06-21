@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="max-width: 400px; margin: 60px auto;">
+    <h2 style="color: #38bdf8; text-align: center; margin-bottom: 20px;">Espace Connexion</h2>
+    <p class="menu-intro" style="text-align: center; font-size: 13px;">Identifiez-vous pour accéder au chat multimodal ABM AI ou au panneau d'administration.</p>
+    
+    <form action="{{ url_for('login') }}" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+        <div>
+            <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #c4c7c5;">Nom d'utilisateur</label>
+            <input type="text" name="username" placeholder="Votre nom d'utilisateur ou 'admin'" required 
+                   style="width: 100%; box-sizing: border-box; background: #1e1e20; border: 1px solid #2f2f32; color: #fff; padding: 12px; border-radius: 6px; outline: none;">
+        </div>
+        
+        <div>
+            <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #c4c7c5;">Mot de passe</label>
+            <input type="password" name="password" placeholder="••••••••" required 
+                   style="width: 100%; box-sizing: border-box; background: #1e1e20; border: 1px solid #2f2f32; color: #fff; padding: 12px; border-radius: 6px; outline: none;">
+        </div>
+        
+        <button type="submit" class="cta-btn" style="width: 100%; border: none; padding: 14px; background-color: #25d366; box-shadow: 0 0 15px rgba(37,211,102,0.3); color: white; cursor: pointer; text-align: center; margin-top: 10px;">
+            🔐 Entrer dans l'application
+        </button>
+    </form>
+    <p style="text-align: center; font-size: 13px; color: #c4c7c5; margin-top: 15px;">
+        Nouveau client ? <a href="{{ url_for('register') }}" style="color: #38bdf8; text-decoration: none;">Créez un compte ici</a>
+    </p>
+</div>
+{% endblock %}

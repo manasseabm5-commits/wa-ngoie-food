@@ -1,0 +1,155 @@
+<!-- templates/menu.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2 style="text-align: center; color: #d4af37; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px;">
+        Vitrine Interactive & Tarifs Officiels
+    </h2>
+    <p class="menu-intro" style="text-align: center; margin-bottom: 40px;">
+        Sélectionnez vos plats. Cliquez sur le bouton vert pour commander instantanément via WhatsApp, ou utilisez l'assistant virtuel pour composer un panier complet.
+    </p>
+
+    <h3 class="section-title">🥪 Nos Spécialités Salées</h3>
+    <div class="menu-grid">
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/chawarma.jpg') }}" alt="Chawarma">
+            <div class="card-info">
+                <h4>Chawarma croustillant</h4>
+                <p class="price">14.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/hamburger.jpg') }}" alt="Hamburger">
+            <div class="card-info">
+                <h4>Hamburger Juteux</h4>
+                <p class="price">16.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/tacos.jpg') }}" alt="Tacos">
+            <div class="card-info">
+                <h4>Tacos Généreux</h4>
+                <p class="price">16.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/saucisse.jpg') }}" alt="Saucisse">
+            <div class="card-info">
+                <h4>Saucisse (Portion 2 pcs)</h4>
+                <p class="price">14.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/cuisse.jpg') }}" alt="Cuisse">
+            <div class="card-info">
+                <h4>Cuisse de poulet (2 pcs)</h4>
+                <p class="price">14.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/poulet_mayo.jpg') }}" alt="Poulet Mayo">
+            <div class="card-info">
+                <h4>Poulet Mayo Entier</h4>
+                <p class="price">28.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/samoussa.jpg') }}" alt="Samoussa">
+            <div class="card-info">
+                <h4>Samoussa (Portion 2 pcs)</h4>
+                <p class="price">14.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/boulette.jpg') }}" alt="Boulette">
+            <div class="card-info">
+                <h4>Boulettes de viande (3 pcs)</h4>
+                <p class="price">14.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/spaghetti.jpg') }}" alt="Spaghetti">
+            <div class="card-info">
+                <h4>Spaghetti à la viande</h4>
+                <p class="price">14.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/chikwangue.jpg') }}" alt="Chikwangue">
+            <div class="card-info">
+                <h4>Chikwangue fraîche</h4>
+                <p class="price">3.500 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/frites.jpg') }}" alt="Frites">
+            <div class="card-info">
+                <h4>Portion de Frites</h4>
+                <p class="price">7.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/banane.jpg') }}" alt="Banane">
+            <div class="card-info">
+                <h4>Banane frite (Makemba)</h4>
+                <p class="price">7.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION : RAFRAÎCHISSEMENTS -->
+    <h3 class="section-title">🥤 Boissons</h3>
+    <div class="menu-grid">
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/eau.jpg') }}" alt="Eau">
+            <div class="card-info">
+                <h4>Eau minérale fraîche</h4>
+                <p class="price">2.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/sucre.jpg') }}" alt="Sucré">
+            <div class="card-info">
+                <h4>Canette Sucrée</h4>
+                <p class="price">3.500 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/savanna.jpg') }}" alt="Savanna">
+            <div class="card-info">
+                <h4>Savanna Cider</h4>
+                <p class="price">8.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+        <div class="menu-card">
+            <img src="{{ url_for('static', filename='images/biere.jpg') }}" alt="Bière">
+            <div class="card-info">
+                <h4>Bière locale</h4>
+                <p class="price">4.000 FC</p>
+                <a href="https://wa.me" target="_blank" class="btn-action btn-wa">🟢 Commander</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-footer" style="text-align: center; margin-top: 50px; padding-bottom: 20px;">
+        <a href="{{ url_for('chat') }}" class="btn-action" style="background: #2b2a33; border: 1px solid #d4af37; color: #fff; padding: 14px 28px; border-radius: 25px; font-weight: bold; text-decoration: none;">
+            🚀 Commander via notre Assistant Virtuel (Panier Multiple)
+        </a>
+    </div>
+</div>
+{% endblock %}

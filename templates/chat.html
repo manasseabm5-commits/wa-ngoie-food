@@ -1,0 +1,72 @@
+<!-- templates/chat.html -->
+{% extends 'base.html' %}
+
+{% block layout %}
+<div class="chat-layout">
+    <div class="sidebar">
+        <button class="new-chat-btn" onclick="nouvelleConversation()"><span>+</span> Nouvelle discussion</button>
+        <div style="font-size: 11px; text-transform: uppercase; color: #747775; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: bold;">Sessions actives</div>
+        <div class="conv-list" id="convList"></div>
+        
+        <div style="margin-top: auto; border-top: 1px solid #2f2f32; padding-top: 15px;">
+            <div style="font-size: 11px; text-transform: uppercase; color: #747775; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: bold;">Mes Commandes actives</div>
+            <div style="max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                {% for c in commandes %}
+                <div style="background: rgba(43,42,51,0.4); padding: 8px; border-radius: 6px; border: 1px solid #2f2f32; font-size: 12px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <strong>#{{ c.id }}</strong>
+                        <span style="color:#38bdf8;">{{ c.statut }}</span>
+                    </div>
+                    <div style="color:#c4c7c5; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ c.contenu }}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+                        <span style="color:#25d366; font-weight:bold;">{{ c.total_final }} FC</span>
+                        <button data-id="{{ c.id }}" onclick="forcerAlerteInsister(this.getAttribute('data-id'))" style="background:#ef4444; border:none; color:white; font-size:10px; padding:3px 8px; border-radius:10px; cursor:pointer; font-weight:bold;">🚨 Insister</button>
+                    </div>
+                </div>
+                {% else %}
+                <div style="font-size: 11px; color: #747775; text-align: center; padding: 10px;">Aucune commande passée</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-main">
+        <div class="audio-controls">
+            <button id="micBtn" class="audio-btn" onclick="startVoiceRecognition()">🎙️ Traitement Vocale</button>
+            <button class="audio-btn" style="border-color: #ef4444; color: #ef4444;" onclick="window.speechSynthesis.cancel()">🔇 Désactiver l'audio</button>
+            
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+                <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="ABM AI Profil" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 1px solid #d4af37;">
+                <span style="font-size: 12px; color: #fff; font-weight: 600;">ABM AI Engine</span>
+            </div>
+        </div>
+
+        <div id="chatbox">
+            <div class="message-row model">
+                <div class="message-author">ABM AI</div>
+                <div>Mboté ! Je suis ABM AI, votre assistant virtuel exclusif pour le restaurant **Wa Ngoie Food**. Énoncez les plats ou boissons que vous désirez commander, et je m'occupe de tout calculer !</div>
+            </div>
+        </div>
+
+        <div id="imagePreviewContainer" style="display: none; padding: 12px 15%; background: rgba(19, 19, 20, 0.9); border-top: 1px solid #2f2f32;">
+            <div style="position: relative; display: inline-block;">
+                <img id="previewImg" src="" alt="Aperçu" style="width: 85px; height: 85px; object-fit: cover; border-radius: 8px; border: 1px solid #2f2f32;">
+                <button onclick="annulerApercuPhoto()" style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px;">X</button>
+            </div>
+        </div>
+
+        <div class="input-container-wrapper">
+            <div class="chat-input-area">
+                <label for="imageInput" style="cursor: pointer; font-size: 20px; color: #c4c7c5; user-select: none;" title="Joindre une photo">📎</label>
+                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="afficherApercuImage(this)">
+                
+                <input type="text" id="userInput" placeholder="Formulez votre commande ici (ex: Je veux 2 chawarmas et 1 frites)..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                
+                <button onclick="sendMessage()" style="background: transparent; border: none; color: #d4af37; font-size: 20px; cursor: pointer; font-weight: bold;" title="Envoyer">➔</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
