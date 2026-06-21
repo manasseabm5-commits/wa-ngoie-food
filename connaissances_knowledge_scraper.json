@@ -1,0 +1,43 @@
+{
+    "wa_ngoie_food_official_data": {
+        "identite_plateforme": "Your fastest path to production for",
+        "url_source": "https://onrender.com",
+        "date_du_scraping": "2026-06-21 23:07:48",
+        "corpus_savant": [
+            "Click, click, done.",
+            "Select a service",
+            "Choose what you need to run your apps, APIs, agent logic, databases, cron jobs, and more.",
+            "Deploy your code",
+            "Just connect your repo. Render deploys on the right runtime for your framework.",
+            "Render does the rest",
+            "Get instant networking, scaling, previews, deploys, rollbacks, and monitoring.",
+            "Deploy apps and agents with zero ops",
+            "Intuitive hosting and private networking for web services, Postgres databases, cron jobs, workflows, static sites, background jobs, key value stores, private services, WebSockets, edge caches, isolated environments,",
+            "Full-stack previews for every pull request",
+            "Iterate quickly with ephemeral previews of your entire application architecture for every change.",
+            "Load-based autoscaling that handles 100x traffic bursts and beyond",
+            "Keep your workloads running smoothly through viral moments, seasonal spikes, and launch days.",
+            "Durable, long-running workflows as code",
+            "Deploy reliable agents and background processes at scale, without wiring up queues, workers, and retry logic.",
+            "Enterprise-grade Postgres databases",
+            "Deploy fully-managed databases with point-in-time recovery, read replicas, and high availability.",
+            "Integrated logs and monitoring for builds, deploys and live services",
+            "See critical metrics for all of your Render infrastructure from day zero, and stream telemetry to external tools.",
+            "Intuitive infrastructure, designed for builders",
+            "Native language runtimes",
+            "Infrastructure as code",
+            "Isolated environments",
+            "Object storage",
+            "Redis-compatible Key Value",
+            "Edge caching",
+            "Fully-managed TLS",
+            "Stay secure and resilient by default",
+            "Private networking",
+            "Built-in DDoS protection",
+            "Managed compliance",
+            "Audit controls",
+            "Encryption at rest",
+            "Unique user identification"
+        ]
+    }
+}
