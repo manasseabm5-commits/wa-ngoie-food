@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-🚀 APPLICATION WA NGOIE FOOD - LOGIQUE SERVEUR CENTRAL (PROD 2026 - FINAL EXPERT)
+🚀 APPLICATION WA NGOIE FOOD - LOGIQUE SERVEUR CENTRAL (PROD 2026 - FIX FINAL CLINIQUE)
 Développé de bout en bout par l'expert en ingénierie logicielle Manassé ABM
 """
 
@@ -9,7 +9,6 @@ import time
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
-from markupsafe import Markup
 from config import Config
 from model import db, User, Commande, IATraining
 
@@ -95,26 +94,38 @@ def ai_message():
     message_client = request.form.get('message', '').strip()
     message_nettoye = message_client.lower()
     
-    # CORRECTIF SÉCURITÉ MULTIMODALE : Blindage du traitement du fichier image
+    # Interception et réception multimodale des photos
     photo_jointe = request.files.get('imageInput')
     nom_fichier_sauvegarde = None
     
     if photo_jointe and photo_jointe.filename != '':
         sec_name = secure_filename(photo_jointe.filename)
-        # Fallback au cas où secure_filename efface tout le nom (ex: caractères lingala/accentués)
         if not sec_name or '.' not in sec_name:
             sec_name = f"photo_{int(time.time())}.jpg"
         nom_fichier_sauvegarde = f"client_{current_user.id}_{sec_name}"
         chemin_complet = os.path.join(app.config['UPLOAD_FOLDER'], nom_fichier_sauvegarde)
         photo_jointe.save(chemin_complet)
-        print(f"📸 Image multimédiale enregistrée avec succès : {chemin_complet}")
 
     if nom_fichier_sauvegarde and message_client == "":
         reponse_photo = (
             f"Mboté {current_user.username} ! J'ai bien reçu votre photo. 📸\n\n"
-            f"Notre module multimodal l'a transmise à l'administrateur Manassé ABM pour validation de votre reçu ou de votre livraison."
+            f"Notre module multimodal l'a transmise à l'administrateur pour validation de votre reçu ou de votre livraison."
         )
         return jsonify({"status": "success", "role": "model", "response": reponse_photo})
+
+    # Interception textuelle directe de la validation Oui / Non
+    if message_nettoye in ["oui", "o", "yes", "waw", "valider", "confirmer"]:
+        return jsonify({
+            "status": "trigger_order", 
+            "role": "model", 
+            "response": "Parfait ! J'enregistre votre demande logistique dans le système..."
+        })
+    elif message_nettoye in ["non", "n", "no", "te", "annuler"]:
+        return jsonify({
+            "status": "success", 
+            "role": "model", 
+            "response": "Commande annulée avec succès. Que désirez-vous d'autre sur la vitrine ?"
+        })
 
     entrainement = IATraining.query.filter(
         (IATraining.message_client.ilike(f"%{message_client}%")) | (IATraining.message_client.ilike(f"%{message_nettoye}%")),
@@ -138,17 +149,21 @@ def ai_message():
         remise = int(total_brut * 0.10) if current_user.is_student_isipa else 0
         total_final = total_brut - remise
 
-        # CORRECTIF LOGIQUE ORM : Utilisation de contenu_panier (et non contents_basket) [index]
-        reponse_ia = Markup(
+        # CORRECTIF RADICAL : Plus aucune balise HTML envoyée par l'IA. Texte pur sémantique.
+        reponse_ia = (
             f"📋 **Votre Panier Wa Ngoie Food** :\n"
             f"- 1x {message_client.capitalize()}\n\n"
             f"💰 Total Brut : {total_brut:,} FC\n"
-            f"🎓 Remise ISIPA : -{remise:,} FC\n"
+            f"🎓 Remise ISIPA (10%) : -{remise:,} FC\n"
             f"💵 **Total Net : {total_final:,} FC**\n\n"
-            f"Confirmez votre choix pour envoyer les informations au gérant :\n\n"
-            f"<button class='btn-trigger-confirm' onclick=\"confirmerEtAjouterCommande('1x {message_client}', {total_brut}, {total_final})\" style='background:#25d366; color:#131314; font-weight:bold; border:none; padding:12px 18px; border-radius:24px; cursor:pointer; display:none; margin-top:10px;'>🟢 Valider & Envoyer sur WhatsApp</button>"
+            f"Souhaitez-vous valider cette commande et l'envoyer sur WhatsApp ?"
         )
-        return jsonify({"status": "success", "role": "model", "response": reponse_ia})
+        return jsonify({
+            "status": "success", 
+            "role": "model", 
+            "response": reponse_ia,
+            "metadata": {"contenu": f"1x {message_client.capitalize()}", "brut": total_brut, "final": total_final}
+        })
     
     nouvelle_erreur = IATraining(telephone_client=current_user.phone, message_client=message_client, mauvaise_reponse="Incompris", bonne_reponse="", corrige=False)
     db.session.add(nouvelle_erreur)
@@ -174,7 +189,7 @@ def creer_commande():
 @app.route('/admin/commande/<int:cmd_id>/statut/<string:nouveau_statut>', methods=['POST'])
 @login_required
 def modifier_statut_commande(cmd_id, nouveau_statut):
-    if current_user.username != 'admin': return jsonify({"status": "error"}), 403
+    if current_user.username != 'wangoie': return jsonify({"status": "error"}), 403
     cmd = Commande.query.get(cmd_id)
     if cmd:
         cmd.statut = nouveau_statut
@@ -184,7 +199,7 @@ def modifier_statut_commande(cmd_id, nouveau_statut):
 @app.route('/admin/commande/<int:cmd_id>/supprimer', methods=['POST'])
 @login_required
 def supprimer_commande(cmd_id):
-    if current_user.username != 'admin': return jsonify({"status": "error"}), 403
+    if current_user.username != 'wangoie': return jsonify({"status": "error"}), 403
     cmd = Commande.query.get(cmd_id)
     if cmd:
         db.session.delete(cmd)
@@ -194,7 +209,7 @@ def supprimer_commande(cmd_id):
 @app.route('/admin')
 @login_required
 def liste_commandes():
-    if current_user.username != 'admin': return redirect(url_for('chat'))
+    if current_user.username != 'wangoie': return redirect(url_for('chat'))
     erreurs = IATraining.query.filter_by(corrige=False).all()
     total_corriges = IATraining.query.filter_by(corrige=True).count()
     return render_template('ia_training.html', erreurs=erreurs, total_corriges=total_corriges, precision_ia=95)
@@ -204,21 +219,8 @@ def liste_commandes():
 def api_admin_commandes():
     return jsonify([c.to_dict() for c in Commande.query.order_by(Commande.id.desc()).all()])
 
-@app.route('/api/commande/<int:cmd_id>/insister', methods=['POST'])
-@login_required
-def commande_insister(cmd_id):
-    commande = Commande.query.get_or_404(cmd_id)
-    commande.statut = "Client Insiste !"
-    db.session.commit()
-    return jsonify({"status": "success", "new_status": "Client Insiste !"})
-
-
 if __name__ == '__main__':
-    # CONTOURNE BLOCAGE SHELL : Auto-initialisation à chaud gratuite sur Render [index]
     if "postgresql" in app.config['SQLALCHEMY_DATABASE_URI']:
         with app.app_context():
-            print("⚙️ Environnement Render PostgreSQL détecté. Synchronisation logistique des tables...")
             db.create_all()
-            print("✅ Tables logistiques prêtes pour Kinshasa.")
-            
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)

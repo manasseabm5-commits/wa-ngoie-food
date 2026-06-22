@@ -1,9 +1,13 @@
 /**
- * 🎨 APPLICATION WA NGOIE FOOD - LOGIQUE JS FRONTEND CENTRALE (PROD 2026 - COMPLÈTE)
+ * 🎨 APPLICATION WA NGOIE FOOD - LOGIQUE JS FRONTEND CENTRALE (PROD 2026 - BLOCK-FIX)
  * Conçu, nettoyé et optimisé par l'expert en ingénierie logicielle Manassé ABM
  */
 
 const NUMERO_ADMIN_WANGOIE = "243831674115";
+
+let panierEnAttente = null;
+let brutEnAttente = 0;
+let finalEnAttente = 0;
 
 function genererLienWhatsApp(messageText) {
     const messageEncode = encodeURIComponent(messageText);
@@ -13,22 +17,15 @@ function genererLienWhatsApp(messageText) {
 
 function sendMessage() {
     const input = document.getElementById("userInput");
-    const imageInput = document.getElementById("imageInput");
     if (!input) return;
-    
     const message = input.value.trim();
-    const aUnePhoto = imageInput && imageInput.files && imageInput.files.length > 0;
+    if (message === "") return;
 
-    if (message === "" && !aUnePhoto) return;
-
-    let imageLocaleUrl = null;
-    if (aUnePhoto) {
-        imageLocaleUrl = URL.createObjectURL(imageInput.files[0]);
-    }
-
-    ajouterBulleGraphique("user", message, imageLocaleUrl, false);
+    ajouterBulleGraphique("user", message, null, false);
     input.value = ""; 
-    annulerApercuPhoto();
+
+    // On cache les boutons de choix dès que l'utilisateur renvoie un message
+    document.getElementById("choice-container").style.display = "none";
 
     const box = document.getElementById("chatbox");
     const loaderRow = document.createElement("div");
@@ -39,17 +36,26 @@ function sendMessage() {
 
     const formData = new FormData();
     formData.append("message", message);
-    if (aUnePhoto) {
-        formData.append("imageInput", imageInput.files[0]);
-    }
 
     fetch("/api/chat/message", { method: "POST", body: formData })
     .then(res => res.json())
     .then(data => {
         const loader = box.querySelector(".temp-loader");
         if (loader) loader.remove();
-        if (data.status === "success") {
-            ajouterBulleGraphique("model", data.response, null, true);
+
+        if (data.status === "trigger_order" && panierEnAttente !== null) {
+            ajouterBulleGraphique("model", data.response, null, false);
+            executerEnregistrementCommande();
+        } else {
+            if (data.metadata) {
+                panierEnAttente = data.metadata.contenu;
+                brutEnAttente = data.metadata.brut;
+                finalEnAttente = data.metadata.final;
+                // Affiche le panier avec activation des boutons fixes natifs à la fin du streaming
+                ajouterBulleGraphique("model", data.response, null, true, true);
+            } else {
+                ajouterBulleGraphique("model", data.response, null, true, false);
+            }
         }
     })
     .catch(() => {
@@ -59,24 +65,40 @@ function sendMessage() {
     });
 }
 
-function confirmerEtAjouterCommande(panierText, brut, final) {
+// Fonction déclenchée par les boutons fixes HTML
+function validerChoixIA(reponse) {
+    document.getElementById("choice-container").style.display = "none";
+    if (reponse === 'oui') {
+        ajouterBulleGraphique("user", "Oui", null, false);
+        executerEnregistrementCommande();
+    } else {
+        ajouterBulleGraphique("user", "Non", null, false);
+        ajouterBulleGraphique("model", "Commande annulée. Que désirez-vous d'autre ?", null, false);
+        panierEnAttente = null;
+    }
+}
+
+function executerEnregistrementCommande() {
+    if (!panierEnAttente) return;
+    
     const formData = new FormData();
-    formData.append("contenu", panierText);
-    formData.append("total_brut", brut);
-    formData.append("total_final", final);
+    formData.append("contenu", panierEnAttente);
+    formData.append("total_brut", brutEnAttente);
+    formData.append("total_final", finalEnAttente);
 
     fetch("/api/commande/creer", { method: "POST", body: formData })
     .then(res => res.json())
     .then(data => {
         if (data.status === "success") {
-            const texteWhatsApp = `Mboté ! Je confirme ma commande officielle Wa Ngoie Food #${data.cmd_id} pour un montant de ${final.toLocaleString()} FC. Merci de lancer le Chef !`;
+            const texteWhatsApp = `Mboté ! Je confirme ma commande officielle Wa Ngoie Food #${data.cmd_id} d'un montant de ${finalEnAttente.toLocaleString()} FC. Merci de lancer le Chef !`;
+            panierEnAttente = null;
             window.open(genererLienWhatsApp(texteWhatsApp), '_blank');
-            setTimeout(() => { location.reload(); }, 800);
+            setTimeout(() => { window.location.reload(); }, 1000);
         }
     });
 }
 
-function ajouterBulleGraphique(role, contenu, imgUrl, appliquerStreaming = false) {
+function ajouterBulleGraphique(role, contenu, imgUrl, appliquerStreaming = false, activerBoutonsChoix = false) {
     const box = document.getElementById("chatbox");
     if (!box) return;
 
@@ -104,15 +126,21 @@ function ajouterBulleGraphique(role, contenu, imgUrl, appliquerStreaming = false
                 i++;
             } else {
                 clearInterval(interval);
-                const btnAction = contentDiv.querySelector('.btn-trigger-confirm');
-                if (btnAction) btnAction.style.display = "inline-block";
+                // Affiche de manière sécurisée les boutons de choix fixes en bas de la page
+                if (activerBoutonsChoix) {
+                    const container = document.getElementById("choice-container");
+                    if (container) container.style.display = "flex";
+                    box.scrollTop = box.scrollHeight;
+                }
             }
         }, 20);
     } else {
         contentDiv.innerHTML += `<div>${texteA_Afficher.replace(/\n/g, "<br>")}</div>`;
+        if (activerBoutonsChoix) {
+            const container = document.getElementById("choice-container");
+            if (container) container.style.display = "flex";
+        }
         box.scrollTop = box.scrollHeight;
-        const btnAction = contentDiv.querySelector('.btn-trigger-confirm');
-        if (btnAction) btnAction.style.display = "inline-block";
     }
 }
 
@@ -121,17 +149,17 @@ function forcerAlerteInsister(cmdId) {
     fetch(`/api/commande/${cmdId}/insister`, { method: "POST" })
     .then(() => {
         window.open(genererLienWhatsApp(`Urgence Commande Wa Ngoie Food #${cmdId}`), '_blank');
-        location.reload();
+        setTimeout(() => { window.location.reload(); }, 500);
     });
 }
 
 function afficherApercuImage(input) {
     const conteneur = document.getElementById("imagePreviewContainer");
     const image = document.getElementById("previewImg");
-    if (input.files && input.files[0]) {
+    if (input.files && input.files) {
         const reader = new FileReader();
         reader.onload = function(e) { image.src = e.target.result; conteneur.style.display = "block"; };
-        reader.readAsDataURL(input.files[0]);
+        reader.readAsDataURL(input.files);
     }
 }
 
@@ -145,38 +173,17 @@ function annulerApercuPhoto() {
 function startVoiceRecognition() {
     const micBtn = document.getElementById("micBtn");
     const userInput = document.getElementById("userInput");
-    
-    if (!('webkitSpeechRecognition' in window) && !('speechRecognition' in window)) {
-        alert("La reconnaissance vocale n'est pas supportée par votre navigateur actuel.");
-        return;
-    }
-    
+    if (!('webkitSpeechRecognition' in window) && !('speechRecognition' in window)) return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    // CORRECTIF SÉCURITÉ : Instanciation propre de l'API native [index]
     const recognition = new SpeechRecognition();
-    
     recognition.lang = "fr-FR"; 
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    
     micBtn.innerHTML = "⏳ Écoute...";
-    micBtn.style.borderColor = "#25d366";
-    micBtn.style.color = "#25d366";
-    
     recognition.start();
-    
     recognition.onresult = function(event) {
-        const texteFormule = event.results[0][0].transcript;
-        if (userInput && texteFormule) {
-            userInput.value = texteFormule;
+        if (userInput && event.results.transcript) {
+            userInput.value = event.results.transcript;
             sendMessage();
         }
     };
-    
-    recognition.onerror = function() { micBtn.innerHTML = "🎙️ Vocale"; };
-    recognition.onend = function() {
-        micBtn.innerHTML = "🎙️ Vocale";
-        micBtn.style.borderColor = "#2f2f32";
-        micBtn.style.color = "#c4c7c5";
-    };
+    recognition.onend = function() { micBtn.innerHTML = "🎙️ Vocale"; };
 }
