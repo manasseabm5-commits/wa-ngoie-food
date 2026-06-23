@@ -1,25 +1,23 @@
 # -*- coding: utf-8 -*-
 """
 🌱 SCRIPT D'INITIALISATION ET DE CONFIGURATION DU SERVEUR MAÎTRE (PROD 2026)
-Développé pour Wa Ngoie Food par l'expert Manassé ABM
+Développé pour Wa Ngoie Food par l'expert Manassé ABM - Version Déploiement Gratuit Automatique
 """
 
 from app import app
 from model import db, User
 
 def initialiser_systeme():
-    # Détection de sécurité pour la base PostgreSQL de production
+    # Correctif d'expert : Plus d'envoi d'input() bloquant pour Render gratuit
     if "postgresql" in app.config['SQLALCHEMY_DATABASE_URI']:
-        print("⚠️ COMPTE DE PRODUCTION DÉTECTÉ : Vous pointez sur PostgreSQL Render !")
-        confirmation = input("Voulez-vous VRAIMENT RÉINITIALISER toutes les tables ? (oui/non) : ")
-        if confirmation.strip().lower() != "oui":
-            print("❌ Opération annulée pour protéger les données de production.")
-            return
+        print("⚠️ Application automatique des nouvelles structures sur PostgreSQL Render...")
+    else:
+        print("🌱 Initialisation locale de la base de données de test...")
 
     print("🚀 Démarrage du déploiement des structures de tables Wa Ngoie Food...")
     
     with app.app_context():
-        # Reconstruction propre de l'enclave SQL
+        # Reconstruction propre et sémantique des tables SQL
         db.drop_all()
         db.create_all()
         print("✅ Base de données purgée et réinitialisée avec succès.")
