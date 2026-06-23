@@ -1,85 +1,81 @@
-<!-- templates/chat.html -->
 {% extends 'base.html' %}
 
 {% block layout %}
 <div class="chat-layout">
     <!-- Barre latérale (Sidebar) -->
     <div class="sidebar" id="sidebar">
-        <button class="menu-toggle-btn" onclick="toggleSidebar(event)" style="align-self: flex-end; margin-bottom: 15px; font-size: 18px; cursor: pointer;">✕</button>
+        <button class="menu-toggle-btn" onclick="toggleSidebar(event)">✕</button>
         
         <button class="new-chat-btn" onclick="window.location.reload()"><span>+</span> Nouvelle discussion</button>
-        <div style="font-size: 11px; text-transform: uppercase; color: #747775; letter-spacing: 0.5px; margin: 15px 0 10px 0; font-weight: bold;">Sessions actives</div>
-        <div class="conv-list" id="convList"></div>
         
-        <!-- Bloc de suivi logistique des commandes du client -->
-        <div style="margin-top: auto; border-top: 1px solid #2f2f32; padding-top: 15px;">
-            <div style="font-size: 11px; text-transform: uppercase; color: #747775; letter-spacing: 0.5px; margin-bottom: 10px; font-weight: bold;">Mes Commandes actives</div>
-            <div style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-                {% for c in commandes %}
-                <div style="background: rgba(43,42,51,0.4); padding: 10px; border-radius: 8px; border: 1px solid #2f2f32; font-size: 12px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                        <strong>#{{ c.id }}</strong>
-                        <span style="color: #38bdf8; font-weight: 600;">{{ c.statut }}</span>
-                    </div>
-                    <div style="color:#c4c7c5; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom: 6px;">{{ c.contenu_panier }}</div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="color:#25d366; font-weight:bold;">{{ c.total_final }} FC</span>
-                        <button data-id="{{ c.id }}" onclick="forcerAlerteInsister(this.getAttribute('data-id'))" style="background:#ef4444; border:none; color:white; font-size:10px; padding:4px 10px; border-radius:12px; cursor:pointer; font-weight:bold; transition: background 0.2s;">🚨 Insister</button>
-                    </div>
+        <div class="sidebar-section-title">Mes Commandes en cours</div>
+        <div class="user-orders-list">
+            {% for c in commandes %}
+            <div class="order-mini-card">
+                <div class="order-mini-header">
+                    <strong>#{{ c.id }}</strong>
+                    <span class="order-status-badge">{{ c.statut }}</span>
                 </div>
-                {% else %}
-                <div style="font-size: 11px; color: #747775; text-align: center; padding: 15px 0;">Aucune commande active</div>
-                {% endfor %}
+                <div class="order-mini-content">{{ c.contenu_panier }}</div>
+                <div class="order-mini-footer">
+                    <span class="order-mini-total">{{ c.total_final }} FC</span>
+                    <button data-id="{{ c.id }}" onclick="forcerAlerteInsister(this.getAttribute('data-id'))" class="btn-insist">🚨 Insister</button>
+                </div>
             </div>
+            {% else %}
+            <div class="no-orders-text">Aucune commande active</div>
+            {% endfor %}
         </div>
     </div>
 
-    <!-- Section Principale du Chat Multimodal -->
+    <!-- Section Principale du Chat -->
     <div class="chat-main" onclick="fermerSidebarSiClicExterieur(event)">
-        <!-- Barre d'outils audio supérieure -->
-        <div class="audio-controls" style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; box-sizing: border-box; position: relative; z-index: 100;">
-            <button class="menu-toggle-btn" onclick="toggleSidebar(event)" style="cursor: pointer;">☰</button>
+        <!-- Barre supérieure -->
+        <div class="chat-top-bar">
+            <button class="menu-toggle-btn" onclick="toggleSidebar(event)">☰</button>
             
-            <button id="micBtn" class="audio-btn" onclick="startVoiceRecognition()">🎙️ Vocale</button>
-            <button class="audio-btn" style="border-color: #ef4444; color: #ef4444;" onclick="window.speechSynthesis.cancel()">🔇 Off</button>
+            <div class="audio-actions">
+                <button id="micBtn" class="audio-btn" onclick="startVoiceRecognition()">🎙️ Parler au micro</button>
+                <button class="audio-btn btn-off" onclick="window.speechSynthesis.cancel()">🔇 Couper le son</button>
+            </div>
             
-            <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
-                <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="ABM AI Profil" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 1px solid #d4af37;">
-                <span style="font-size: 12px; color: #fff; font-weight: 600;">ABM AI Engine</span>
+            <div class="chat-profile-badge">
+                <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Profil" class="profile-avatar">
+                <span class="profile-name">Assistant ABM AI</span>
             </div>
         </div>
 
-        <!-- Conteneur d'affichage des bulles de discussion -->
-        <div id="chatbox">
+        <!-- Zone des messages (Correction ici : ajout du style de saut de ligne forcé) -->
+        <div id="chatbox" style="white-space: pre-wrap !important; display: flex; flex-direction: column; gap: 25px;">
             <div class="message-row model">
                 <div class="message-author">ABM AI</div>
-                <div class="content">Mboté ! Je suis ABM AI, votre assistant virtuel exclusif pour le restaurant **Wa Ngoie Food**. Énoncez les plats ou boissons que vous désirez commander, et je m'occupe de tout calculer !</div>
+                <div class="content" style="white-space: pre-wrap !important;">Mboté ! Je suis votre assistant pour le restaurant **Wa Ngoie Food**. Dites-moi simplement ce que vous voulez manger ou boire, et je prépare votre panier !</div>
             </div>
         </div>
 
-        <!-- FIX INTERACTIVE : Bloc de choix fixe natif (Masqué au départ, géré par main.js) -->
-        <div id="choice-container" style="display: none; width: 100%; max-width: 820px; margin: 0 auto 10px auto; padding: 0 20px; box-sizing: border-box; justify-content: center; gap: 15px; z-index: 200;">
-            <button onclick="validerChoixIA('oui')" style="flex: 1; background: #25d366; color: #131314; font-weight: bold; border: none; padding: 14px; border-radius: 20px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 15px rgba(37,211,102,0.3); text-transform: uppercase;">🟢 Oui, Commander</button>
-            <button onclick="validerChoixIA('non')" style="flex: 1; background: #2b2a33; color: #ffffff; font-weight: bold; border: 1px solid #2f2f32; padding: 14px; border-radius: 20px; cursor: pointer; font-size: 14px; text-transform: uppercase;">✕ Annuler</button>
+        <!-- Boutons de choix rapides -->
+        <div id="choice-container" class="choice-box-hidden">
+            <button onclick="validerChoixIA('oui')" class="btn-choice-yes">🟢 Oui, Commander</button>
+            <button onclick="validerChoixIA('non')" class="btn-choice-no">✕ Annuler</button>
         </div>
 
-        <!-- Zone d'aperçu photo -->
-        <div id="imagePreviewContainer" style="display: none; padding: 12px 40px; background: rgba(19, 19, 20, 0.95); border-top: 1px solid #2f2f32;">
-            <div style="position: relative; display: inline-block;">
-                <img id="previewImg" src="" alt="Aperçu" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #2f2f32;">
-                <button onclick="annulerApercuPhoto()" style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px;">✕</button>
+        <!-- Zone d'aperçu de l'image -->
+        <div id="imagePreviewContainer" class="preview-box-hidden">
+            <div class="preview-wrapper">
+                <img id="previewImg" src="" alt="Aperçu du reçu">
+                <button onclick="annulerApercuPhoto()" class="btn-close-preview">✕</button>
             </div>
         </div>
 
-        <!-- Zone de saisie bas de page -->
+        <!-- Zone de saisie tout en bas -->
         <div class="input-container-wrapper">
-            <div class="chat-input-area" id="input-area-box" style="width: 100%; max-width: 820px; margin: 0 auto 24px auto; display: flex; align-items: center; background: #1e1e20; border: 1px solid #2f2f32; border-radius: 28px; padding: 12px 20px; box-sizing: border-box;">
-                <label for="imageInput" style="cursor: pointer; font-size: 20px; color: #c4c7c5; user-select: none; margin-right: 15px;" title="Joindre une photo">📎</label>
-                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="afficherApercuImage(this)">
+            <div class="chat-input-area" id="input-area-box">
+                <label for="imageInput" class="btn-attach" title="Joindre une photo">📎</label>
+                <input type="file" id="imageInput" accept="image/*" class="input-file-hidden" onchange="afficherApercuImage(this)">
                 
-                <input type="text" id="userInput" autocomplete="off" autocapitalize="sentences" spellcheck="true" style="flex-grow: 1; background: transparent; border: none; color: white; outline: none; font-size: 15px;" placeholder="Formulez votre commande ici...">
+                <input type="text" id="userInput" autocomplete="off" autocapitalize="sentences" spellcheck="true" class="input-text-field" placeholder="Écrivez votre message ici...">
                 
-                <button onclick="sendMessage()" style="background: transparent; border: none; color: #d4af37; font-size: 22px; cursor: pointer; font-weight: bold; margin-left: 12px; display: flex; align-items: center; justify-content: center;" title="Envoyer">➔</button>
+                <button onclick="sendMessage()" class="btn-send-message" title="Envoyer">➔</button>
             </div>
         </div>
     </div>
@@ -91,12 +87,12 @@
     function toggleSidebar(event) {
         if(event) event.stopPropagation();
         const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('open');
+        if (sidebar) sidebar.classList.toggle('open');
     }
 
     function fermerSidebarSiClicExterieur(event) {
         const sidebar = document.getElementById('sidebar');
-        if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+        if (sidebar && window.innerWidth <= 768 && sidebar.classList.contains('open')) {
             sidebar.classList.remove('open');
         }
     }

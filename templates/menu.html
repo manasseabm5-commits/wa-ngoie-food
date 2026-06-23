@@ -1,38 +1,35 @@
-<!-- templates/menu.html -->
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
-    <h2 style="text-align: center; color: #d4af37; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px;">
-        Vitrine Interactive & Tarifs Officiels
-    </h2>
-    <p class="menu-intro" style="text-align: center; margin-bottom: 40px;">
-        Sélectionnez vos plats. Cliquez sur le bouton vert pour commander instantanément via WhatsApp, ou utilisez l'assistant virtuel pour composer un panier complet.
+    <h2 class="menu-main-title">Vitrine Interactive & Tarifs Officiels</h2>
+    <p class="menu-intro text-center">
+        Sélectionnez vos plats. Cliquez sur le bouton vert pour commander instantanément via WhatsApp, ou utilisez notre assistant virtuel pour composer un panier complet.
     </p>
 
-    <h3 class="section-title">🥪 Nos Spécialités Salées</h3>
+    <h3 class="section-title">🥪 Nos Spécialités</h3>
     <div class="menu-grid">
         <div class="menu-card">
             <img src="{{ url_for('static', filename='images/chawarma.jpg') }}" alt="Chawarma">
             <div class="card-info">
-                <h4>Chawarma croustillant</h4>
+                <h4>Chawarma</h4>
                 <p class="price">14.000 FC</p>
-                <a href="#" data-plat="Chawarma croustillant" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Chawarma" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
             <img src="{{ url_for('static', filename='images/hamburger.jpg') }}" alt="Hamburger">
             <div class="card-info">
-                <h4>Hamburger Juteux</h4>
+                <h4>Hamburger </h4>
                 <p class="price">16.000 FC</p>
-                <a href="#" data-plat="Hamburger Juteux" data-prix="16.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Hamburger" data-prix="16.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
             <img src="{{ url_for('static', filename='images/tacos.jpg') }}" alt="Tacos">
             <div class="card-info">
-                <h4>Tacos Généreux</h4>
+                <h4>Tacos</h4>
                 <p class="price">16.000 FC</p>
-                <a href="#" data-plat="Tacos Généreux" data-prix="16.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Tacos" data-prix="16.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
@@ -40,7 +37,7 @@
             <div class="card-info">
                 <h4>Saucisse (Portion 2 pcs)</h4>
                 <p class="price">14.000 FC</p>
-                <a href="#" data-plat="Saucisse (Portion 2 pcs)" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Saucisse (Portion 2 pcs)" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
@@ -48,7 +45,7 @@
             <div class="card-info">
                 <h4>Cuisse de poulet (2 pcs)</h4>
                 <p class="price">14.000 FC</p>
-                <a href="#" data-plat="Cuisse de poulet (2 pcs)" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Cuisse de poulet (2 pcs)" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
@@ -56,7 +53,7 @@
             <div class="card-info">
                 <h4>Poulet Mayo Entier</h4>
                 <p class="price">28.000 FC</p>
-                <a href="#" data-plat="Poulet Mayo Entier" data-prix="28.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Poulet Mayo Entier" data-prix="28.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
@@ -64,7 +61,7 @@
             <div class="card-info">
                 <h4>Samoussa (Portion 2 pcs)</h4>
                 <p class="price">14.000 FC</p>
-                <a href="#" data-plat="Samoussa (Portion 2 pcs)" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Samoussa (Portion 2 pcs)" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
@@ -72,15 +69,15 @@
             <div class="card-info">
                 <h4>Boulettes de viande (3 pcs)</h4>
                 <p class="price">14.000 FC</p>
-                <a href="#" data-plat="Boulettes de viande (3 pcs)" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Boulettes de viande (3 pcs)" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
-            <img src="{{ url_for('static', filename='images/boulette.jpg') }}" alt="Spaghetti">
+            <img src="{{ url_for('static', filename='images/spaghetti.jpg') }}" alt="Spaghetti">
             <div class="card-info">
                 <h4>Spaghetti à la viande</h4>
                 <p class="price">14.000 FC</p>
-                <a href="#" data-plat="Spaghetti à la viande" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Spaghetti à la viande" data-prix="14.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
@@ -88,7 +85,7 @@
             <div class="card-info">
                 <h4>Chikwangue fraîche</h4>
                 <p class="price">3.500 FC</p>
-                <a href="#" data-plat="Chikwangue fraîche" data-prix="3.500 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Chikwangue fraîche" data-prix="3.500 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
@@ -96,7 +93,7 @@
             <div class="card-info">
                 <h4>Portion de Frites</h4>
                 <p class="price">7.000 FC</p>
-                <a href="#" data-plat="Portion de Frites" data-prix="7.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Portion de Frites" data-prix="7.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
@@ -104,7 +101,7 @@
             <div class="card-info">
                 <h4>Banane frite (Makemba)</h4>
                 <p class="price">7.000 FC</p>
-                <a href="#" data-plat="Banane frite (Makemba)" data-prix="7.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Banane frite (Makemba)" data-prix="7.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
     </div>
@@ -116,7 +113,7 @@
             <div class="card-info">
                 <h4>Eau minérale fraîche</h4>
                 <p class="price">2.000 FC</p>
-                <a href="#" data-plat="Eau minérale fraîche" data-prix="2.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Eau minérale fraîche" data-prix="2.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
@@ -124,7 +121,7 @@
             <div class="card-info">
                 <h4>Canette Sucrée</h4>
                 <p class="price">3.500 FC</p>
-                <a href="#" data-plat="Canette Sucrée" data-prix="3.500 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Canette Sucrée" data-prix="3.500 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
@@ -132,53 +129,32 @@
             <div class="card-info">
                 <h4>Savanna Cider</h4>
                 <p class="price">8.000 FC</p>
-                <a href="#" data-plat="Savanna Cider" data-prix="8.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <a href="#" data-plat="Savanna Cider" data-prix="8.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
         <div class="menu-card">
             <img src="{{ url_for('static', filename='images/biere.jpg') }}" alt="Bière">
             <div class="card-info">
-                <h4>Bière locale</h4>
-                <p class="price">8.000 FC</p>
-                <a href="#" data-plat="Bière locale" data-prix="8.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa" style="width: 100%; box-sizing: border-box;">🟢 Commander</a>
+                <h4>Bière Locale</h4>
+                <p class="price">4.000 FC</p>
+                <a href="#" data-plat="Bière Locale" data-prix="4.000 FC" onclick="genererRoutageVitrine(event, this)" class="btn-action btn-wa">🟢 Commander</a>
             </div>
         </div>
-    </div>
-
-    <div class="menu-footer" style="text-align: center; margin-top: 50px; padding-bottom: 20px;">
-        <a href="{{ url_for('chat') }}" class="btn-action" style="background: #2b2a33; border: 1px solid #d4af37; color: #fff; padding: 14px 28px; border-radius: 25px; font-weight: bold; text-decoration: none;">
-            🚀 Commander via notre Assistant Virtuel (Panier Multiple)
-        </a>
     </div>
 </div>
 
 <script>
-    function genererRoutageVitrine(event, lienElement) {
-        event.preventDefault();
-        
-        const numeroWhatsAppGerant = "243831674115";
-        const nomDuPlat = lienElement.getAttribute('data-plat');
-        const prixDuPlat = lienElement.getAttribute('data-prix');
-        
-        const constructionMessage = "Mboté ! Je souhaite commander en direct depuis la vitrine : 1x " + nomDuPlat + " (" + prixDuPlat + ").";
-        const messageFormateEncode = encodeURIComponent(constructionMessage);
-        
-        // Détection chirurgicale du terminal de l'étudiant
-        const machineEstMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        let redirectionUrlLocale = "";
-        
-        if (machineEstMobile) {
-            redirectionUrlLocale = "whatsapp://send?phone=" + numeroWhatsAppGerant + "&text=" + messageFormateEncode;
-        } else {
-            redirectionUrlLocale = "https://wa.me/" + numeroWhatsAppGerant + "?text=" + messageFormateEncode;
-        }
-        
-        // Applique directement l'adresse sur l'attribut href du lien natif au moment exact du clic
-        lienElement.href = redirectionUrlLocale;
-        lienElement.target = "_blank";
-        
-        // Ouvre instantanément l'application ou l'onglet sans blocage pop-up du smartphone
-        window.open(redirectionUrlLocale, '_blank');
-    }
+function genererRoutageVitrine(event, element) {
+    event.preventDefault();
+    const plat = element.getAttribute('data-plat');
+    const prix = element.getAttribute('data-prix');
+    const message = `Mboté ! Je souhaite commander en direct l'article suivant depuis la vitrine : ${plat} (${prix}). Merci de prendre en charge ma demande !`;
+    
+    const numero = "243831674115";
+    const estMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const urlBase = estMobile ? "whatsapp://send" : "https://whatsapp.com";
+    
+    window.open(`${urlBase}?phone=${numero}&text=${encodeURIComponent(message)}`, '_blank');
+}
 </script>
 {% endblock %}

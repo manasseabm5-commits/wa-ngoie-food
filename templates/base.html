@@ -1,53 +1,42 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wa Ngoie Food | Plateforme Marchande Internationale</title>
-    <!-- Chargement de la feuille de style centrale de production -->
+    <title>Wa Ngoie Food | Plateforme Connectée</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="{{ page_class if page_class else 'bg-restaurant' }}">
 
-    <!-- Barre de Navigation Globale Responsive -->
-    <nav>
+    <nav class="nav-container">
         <div class="brand-title">Wa Ngoie Food</div>
-        <div>
+        <div class="nav-links">
             <a href="{{ url_for('home') }}">Accueil</a>
             <a href="{{ url_for('menu') }}">Menu & Tarifs</a>
             
             {% if current_user.is_authenticated %}
-                <!-- Liens visibles uniquement pour les membres connectés -->
-                <a href="{{ url_for('chat') }}">Espace Commande (IA)</a>
+                <a href="{{ url_for('chat') }}">Assistant Virtuel (IA)</a>
                 
-                {% if current_user.username == 'admin' %}
-                    <!-- Accès sécurisé exclusif au Dashboard d'élite de Manassé ABM -->
-                    <a href="{{ url_for('liste_commandes') }}" style="color: #d4af37; font-weight: bold; border-bottom: 2px solid #d4af37; padding-bottom: 4px;">📦 Dashboard Admin</a>
+                {% if current_user.username == 'wangoie' %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-admin-link">📦 Dashboard Admin</a>
                 {% endif %}
                 
-                <a href="{{ url_for('logout') }}" style="color: #ef4444; margin-left: 15px; font-weight: 600;">Déconnexion ({{ current_user.username }})</a>
+                <a href="{{ url_for('logout') }}" class="nav-logout-link">Déconnexion ({{ current_user.username }})</a>
             {% else %}
-                <!-- Liens pour les visiteurs non authentifiés du campus -->
                 <a href="{{ url_for('login') }}">Se connecter</a>
-                <a href="{{ url_for('register') }}" style="background: rgba(212, 175, 55, 0.15); color: #d4af37; padding: 6px 12px; border-radius: 6px; border: 1px solid #d4af37;">S'inscrire</a>
+                <a href="{{ url_for('register') }}" class="nav-register-btn">S'inscrire</a>
             {% endif %}
         </div>
     </nav>
     
-    <!-- Injection des structures asymétriques spécifiques (comme le Chat) -->
     {% block layout %}{% endblock %}
 
-    <!-- Conteneur d'affichage des contenus standards du site et des messages Flash -->
     <div class="container-fallback">
-        <!-- Module d'alerte et de feedback visuel de Flask -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div style="max-width: 500px; margin: 20px auto; padding: 0 20px;">
+                <div class="flash-container">
                     {% for category, message in messages %}
-                        <div style="padding: 12px 16px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: 500; text-align: center;
-                                    background: {{ '#25d366' if category == 'success' else '#ef4444' }}; color: {{ '#131314' if category == 'success' else '#fff' }};
-                                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                        <div class="flash-message alert-{{ category }}">
                             {{ message }}
                         </div>
                     {% endfor %}

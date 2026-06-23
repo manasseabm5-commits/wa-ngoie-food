@@ -1,47 +1,48 @@
 # -*- coding: utf-8 -*-
 """
-🌱 SCRIPT D'INITIALISATION ET D'INJECTION DE DONNÉES DE TEST (PROD 2026)
+🌱 SCRIPT D'INITIALISATION ET DE CONFIGURATION DU SERVEUR MAÎTRE (PROD 2026)
 Développé pour Wa Ngoie Food par l'expert Manassé ABM
 """
 
 from app import app
-from model import db, User, Commande, IATraining
+from model import db, User
 
 def initialiser_systeme():
+    # Détection de sécurité pour la base PostgreSQL de production
     if "postgresql" in app.config['SQLALCHEMY_DATABASE_URI']:
-        print("⚠️ DANGER : Vous êtes connecté à la base PostgreSQL de Render !")
-        confirmation = input("Voulez-vous VRAIMENT TOUT SUPPRIMER en production ? (oui/non) : ")
+        print("⚠️ COMPTE DE PRODUCTION DÉTECTÉ : Vous pointez sur PostgreSQL Render !")
+        confirmation = input("Voulez-vous VRAIMENT RÉINITIALISER toutes les tables ? (oui/non) : ")
         if confirmation.strip().lower() != "oui":
-            print("❌ Opération annulée pour protéger la production.")
+            print("❌ Opération annulée pour protéger les données de production.")
             return
 
-    print("🚀 Début de l'initialisation de la base de données Wa Ngoie Food...")
+    print("🚀 Démarrage du déploiement des structures de tables Wa Ngoie Food...")
     
     with app.app_context():
+        # Reconstruction propre de l'enclave SQL
         db.drop_all()
         db.create_all()
-        print("✅ Tables SQL recréées avec succès.")
+        print("✅ Base de données purgée et réinitialisée avec succès.")
 
-        # CONFIGURATION DES NOUVEAUX IDENTIFIANTS MAÎTRES REQUIS
+        # CONFIGURATION DE L'ACCÈS DU GÉRANT OFFICIEL
         admin_user = User(
             username="wangoie",
-            phone="243831674115",
-            is_student_isipa=False
+            phone="243831674115"
         )
         admin_user.set_password("cbfw4life")
         db.session.add(admin_user)
-        print("👤 Compte Administrateur configuré (Login: wangoie / MDP: cbfw4life).")
+        print("👤 Compte Gérant Administrateur déployé (Login: wangoie / MDP: cbfw4life).")
 
-        etudiant_user = User(
+        # CONFIGURATION DU COMPTE ARCHITECTE
+        architecte_user = User(
             username="Manasse_ABM",
-            phone="0820000000",
-            is_student_isipa=True
+            phone="0820000000"
         )
-        etudiant_user.set_password("etudiant2026")
-        db.session.add(etudiant_user)
+        architecte_user.set_password("etudiant2026")
+        db.session.add(architecte_user)
+        
         db.session.commit()
-
-        print("\n🎉 Base de données initialisée avec succès ! Tout est prêt pour la production.")
+        print("🎉 Déploiement logiciel achevé. L'écosystème Wa Ngoie Food est opérationnel.")
 
 if __name__ == '__main__':
     initialiser_systeme()

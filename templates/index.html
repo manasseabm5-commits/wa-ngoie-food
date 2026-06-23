@@ -1,43 +1,41 @@
-<!-- templates/index.html -->
 {% extends 'base.html' %}
 {% block content %}
-<div class="container">
-    <!-- Logo et Accueil -->
-    <div style="text-align: center; margin-bottom: 35px;">
-        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo Wa Ngoie Food" style="max-width: 420px; width: 100%; border-radius: 16px; box-shadow: 0 10px 35px rgba(212, 175, 55, 0.2);">
+<div class="container text-center">
+    
+    <div class="logo-wrapper">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo Wa Ngoie Food" class="main-logo">
     </div>
-    <h2 style="text-align: center; color: #d4af37;">Bienvenue chez Wa Ngoie Food</h2>
-    <p style="text-align: center; max-width: 800px; margin: 0 auto 40px auto;">
-        Découvrez notre écosystème connecté, commandez via **ABM AI** ou notre vitrine WhatsApp [index].
+    
+    <h2 class="welcome-title">Bienvenue chez Wa Ngoie Food</h2>
+    <p class="welcome-desc">
+        Commandez vos plats préférés directement en discutant avec notre assistant ABM AI ou en utilisant notre vitrine WhatsApp.
     </p>
 
-    <!-- Fonctionnalités -->
-    <h3>🚀 Fonctionnalités Intégrées</h3>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-        <div style="background: rgba(43, 42, 51, 0.4); padding: 20px; border-radius: 10px;">
-            <h4 style="color: #38bdf8;">🎙️ Traitement Vocal</h4>
-            <p style="color: #c4c7c5;">Commande par micro, français et expressions locales [index].</p>
+    <h3 class="section-title text-left"> Ce que vous pouvez faire</h3>
+    <div class="features-grid">
+        <div class="feature-card">
+            <h4 class="feature-vocal">Parler au micro</h4>
+            <p class="feature-text">Dictez simplement votre commande à haute voix, en français ou avec nos mots d'ici.</p>
         </div>
-        <div style="background: rgba(43, 42, 51, 0.4); padding: 20px; border-radius: 10px;">
-            <h4 style="color: #25d366;">📱 Suivi Logistique</h4>
-            <p style="color: #c4c7c5;">État de livraison en temps réel et relance [index].</p>
+        <div class="feature-card">
+            <h4 class="feature-logistics">Suivre vos plats</h4>
+            <p class="feature-text">Regardez l'évolution de votre commande en temps réel pour savoir quand elle est prête.</p>
         </div>
-        <div style="background: rgba(43, 42, 51, 0.4); padding: 20px; border-radius: 10px;">
-            <h4 style="color: #a855f7;">🎓 Programme ISIPA</h4>
-            <p style="color: #c4c7c5;">Formules étudiants à Kintambo [index].</p>
+        <div class="feature-card">
+            <h4 class="feature-ai">💬 Discuter facilement</h4>
+            <p class="feature-text">Une discussion fluide qui retient vos habitudes pour vous servir plus vite.</p>
         </div>
     </div>
 
-    <!-- Infos Pratiques -->
-    <h3>📍 Infos Pratiques & Signature</h3>
-    <div style="background: rgba(22, 22, 23, 0.5); padding: 25px; border-radius: 12px; border: 1px solid #2f2f32; margin-top: 20px; line-height: 1.8;">
-        <p><strong>📍 Adresse :</strong> Avenue OUA, coin Komoriko, Kintambo (Réf: ISIPA) [index].</p>
-        <p><strong>🧠 Architecte :</strong> Manassé ABM [index].</p>
+    <h3 class="section-title text-left">Infos pratiques</h3>
+    <div class="info-signature-block">
+        <p><strong>Notre Adresse :</strong> Avenue OUA, coin Komoriko, Kintambo, Kinshasa</p>
+        <p><strong>Fait par :</strong> Manassé ABM</p>
     </div>
 
-    <div style="text-align: center; margin-top: 45px;">
-        <a href="{{ url_for('chat') }}" style="color: #d4af37; text-decoration: none; border: 1px solid #d4af37; padding: 10px 20px; border-radius: 20px;">
-            🚀 Accéder à ABM AI
+    <div class="action-footer">
+        <a href="{{ url_for('chat') }}" class="btn-access-ai">
+            Discuter avec l'Assistant ABM AI
         </a>
     </div>
 </div>

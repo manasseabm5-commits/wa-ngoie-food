@@ -1,189 +1,258 @@
 /**
- * 🎨 APPLICATION WA NGOIE FOOD - LOGIQUE JS FRONTEND CENTRALE (PROD 2026 - BLOCK-FIX)
- * Conçu, nettoyé et optimisé par l'expert en ingénierie logicielle Manassé ABM
+ * APPLICATION WA NGOIE FOOD - LOGIQUE FRONTEND CENTRALE
+ * Fait à la main par Manassé ABM - Fix Affichage Menu & Sauts de Ligne
  */
 
-const NUMERO_ADMIN_WANGOIE = "243831674115";
+var NUMERO_ADMIN = "243831674115";
 
-let panierEnAttente = null;
-let brutEnAttente = 0;
-let finalEnAttente = 0;
+// Variables globales pour stocker temporairement les calculs du panier
+var panierEnAttente = null;
+var brutEnAttente = 0;
+var finalEnAttente = 0;
 
-function genererLienWhatsApp(messageText) {
-    const messageEncode = encodeURIComponent(messageText);
-    const estMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    return estMobile ? `whatsapp://send?phone=${NUMERO_ADMIN_WANGOIE}&text=${messageEncode}` : `https://whatsapp.com{NUMERO_ADMIN_WANGOIE}&text=${messageEncode}`;
+// Cette fonction génère le bon lien WhatsApp selon qu'on est sur mobile ou ordinateur
+function creerLienWhatsApp(texteMessage) {
+    var texteEncode = encodeURIComponent(texteMessage);
+    var estSurMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (estSurMobile) {
+        return "whatsapp://send?phone=" + NUMERO_ADMIN + "&text=" + texteEncode;
+    } else {
+        return "https://whatsapp.com" + NUMERO_ADMIN + "&text=" + texteEncode;
+    }
 }
 
+// Fonction principale pour envoyer le message de l'utilisateur
 function sendMessage() {
-    const input = document.getElementById("userInput");
-    if (!input) return;
-    const message = input.value.trim();
-    if (message === "") return;
+    var champSaisie = document.getElementById("userInput");
+    if (!champSaisie) return;
+    
+    var messageText = champSaisie.value.trim();
+    if (messageText === "") return;
 
-    ajouterBulleGraphique("user", message, null, false);
-    input.value = ""; 
+    // On affiche le message de l'utilisateur dans le chat
+    creerBulleMessage("user", messageText, null, false, false);
+    champSaisie.value = ""; 
 
-    // On cache les boutons de choix dès que l'utilisateur renvoie un message
-    document.getElementById("choice-container").style.display = "none";
+    // On cache les boutons d'action (Oui / Annuler) pendant l'envoi
+    var boiteChoix = document.getElementById("choice-container");
+    if (boiteChoix) {
+        boiteChoix.className = "choice-box-hidden";
+    }
 
-    const box = document.getElementById("chatbox");
-    const loaderRow = document.createElement("div");
-    loaderRow.className = "message-row model temp-loader";
-    loaderRow.innerHTML = `<div class="message-author">ABM AI</div><div class="content" style="color: #747775; font-style: italic;">En cours d'analyse sémantique...</div>`;
-    box.appendChild(loaderRow);
-    box.scrollTop = box.scrollHeight;
+    // Affichage d'un indicateur de chargement naturel
+    var zoneChat = document.getElementById("chatbox");
+    var ligneChargement = document.createElement("div");
+    ligneChargement.className = "message-row model chargement-ia";
+    ligneChargement.innerHTML = '<div class="message-author">ABM AI</div><div class="content">En cours d\'analyse...</div>';
+    zoneChat.appendChild(ligneChargement);
+    zoneChat.scrollTop = zoneChat.scrollHeight;
 
-    const formData = new FormData();
-    formData.append("message", message);
+    var donneesFormulaire = new FormData();
+    donneesFormulaire.append("message", messageText);
 
-    fetch("/api/chat/message", { method: "POST", body: formData })
-    .then(res => res.json())
-    .then(data => {
-        const loader = box.querySelector(".temp-loader");
+    // Envoi de la requête au serveur Flask
+    fetch("/api/chat/message", { 
+        method: "POST", 
+        body: donneesFormulaire 
+    })
+    .then(function(reponse) {
+        return reponse.json();
+    })
+    .then(function(data) {
+        // Suppression du loader de chargement
+        var loader = zoneChat.querySelector(".chargement-ia");
         if (loader) loader.remove();
 
         if (data.status === "trigger_order" && panierEnAttente !== null) {
-            ajouterBulleGraphique("model", data.response, null, false);
-            executerEnregistrementCommande();
+            creerBulleMessage("model", data.response, null, false, false);
+            enregistrerCommandeServeur();
         } else {
             if (data.metadata) {
+                // L'IA a détecté un plat, on met le panier en attente
                 panierEnAttente = data.metadata.contenu;
                 brutEnAttente = data.metadata.brut;
                 finalEnAttente = data.metadata.final;
-                // Affiche le panier avec activation des boutons fixes natifs à la fin du streaming
-                ajouterBulleGraphique("model", data.response, null, true, true);
+                creerBulleMessage("model", data.response, null, true, true);
             } else {
-                ajouterBulleGraphique("model", data.response, null, true, false);
+                creerBulleMessage("model", data.response, null, true, false);
             }
         }
     })
-    .catch(() => {
-        const loader = box.querySelector(".temp-loader");
+    .catch(function() {
+        var loader = zoneChat.querySelector(".chargement-ia");
         if (loader) loader.remove();
-        ajouterBulleGraphique("model", "Erreur technique de transmission réseau.", null, false);
+        creerBulleMessage("model", "Désolé, une petite erreur réseau est survenue.", null, false, false);
     });
 }
 
-// Fonction déclenchée par les boutons fixes HTML
-function validerChoixIA(reponse) {
-    document.getElementById("choice-container").style.display = "none";
-    if (reponse === 'oui') {
-        ajouterBulleGraphique("user", "Oui", null, false);
-        executerEnregistrementCommande();
+// Fonction déclenchée lors d'un clic sur les gros boutons d'action (Oui / Annuler)
+function validerChoixIA(reponseUtilisateur) {
+    var boiteChoix = document.getElementById("choice-container");
+    if (boiteChoix) {
+        boiteChoix.className = "choice-box-hidden";
+    }
+
+    if (reponseUtilisateur === 'oui') {
+        creerBulleMessage("user", "Oui", null, false, false);
+        enregistrerCommandeServeur();
     } else {
-        ajouterBulleGraphique("user", "Non", null, false);
-        ajouterBulleGraphique("model", "Commande annulée. Que désirez-vous d'autre ?", null, false);
+        creerBulleMessage("user", "Non", null, false, false);
+        creerBulleMessage("model", "Commande annulée. Que désirez-vous d'autre ?", null, false, false);
         panierEnAttente = null;
     }
 }
 
-function executerEnregistrementCommande() {
+// Enregistrement définitif dans la base de données PostgreSQL de Render
+function enregistrerCommandeServeur() {
     if (!panierEnAttente) return;
     
-    const formData = new FormData();
-    formData.append("contenu", panierEnAttente);
-    formData.append("total_brut", brutEnAttente);
-    formData.append("total_final", finalEnAttente);
+    var donneesCommande = new FormData();
+    donneesCommande.append("contenu", panierEnAttente);
+    donneesCommande.append("total_brut", brutEnAttente);
+    donneesCommande.append("total_final", finalEnAttente);
 
-    fetch("/api/commande/creer", { method: "POST", body: formData })
-    .then(res => res.json())
-    .then(data => {
+    fetch("/api/commande/creer", { 
+        method: "POST", 
+        body: donneesCommande 
+    })
+    .then(function(reponse) {
+        return reponse.json();
+    })
+    .then(function(data) {
         if (data.status === "success") {
-            const texteWhatsApp = `Mboté ! Je confirme ma commande officielle Wa Ngoie Food #${data.cmd_id} d'un montant de ${finalEnAttente.toLocaleString()} FC. Merci de lancer le Chef !`;
+            var messageWhatsApp = "Mboté ! Je confirme ma commande Wa Ngoie Food #" + data.cmd_id + " pour un total de " + finalEnAttente.toLocaleString() + " FC. Merci !";
             panierEnAttente = null;
-            window.open(genererLienWhatsApp(texteWhatsApp), '_blank');
-            setTimeout(() => { window.location.reload(); }, 1000);
+            
+            // Ouverture immédiate de l'onglet WhatsApp officiel
+            window.open(creerLienWhatsApp(messageWhatsApp), '_blank');
+            
+            setTimeout(function() { 
+                window.location.reload(); 
+            }, 1000);
         }
     });
 }
 
-function ajouterBulleGraphique(role, contenu, imgUrl, appliquerStreaming = false, activerBoutonsChoix = false) {
-    const box = document.getElementById("chatbox");
-    if (!box) return;
+// Fonction pour insérer graphiquement une bulle de texte dans l'écran de discussion
+function creerBulleMessage(role, texte, lienImage, effetTexte, afficherBoutons) {
+    var zoneChat = document.getElementById("chatbox");
+    if (!zoneChat) return;
 
-    const row = document.createElement("div");
-    row.className = `message-row ${role}`;
-    row.innerHTML = `<div class="message-author">${role === 'user' ? 'Vous' : 'ABM AI'}</div><div class="content"></div>`;
-    box.appendChild(row);
-    const contentDiv = row.querySelector('.content');
+    var conteneurLigne = document.createElement("div");
+    conteneurLigne.className = "message-row " + role;
+    
+    var auteur = (role === 'user') ? 'Vous' : 'ABM AI';
+    conteneurLigne.innerHTML = '<div class="message-author">' + auteur + '</div><div class="content"></div>';
+    zoneChat.appendChild(conteneurLigne);
+    
+    var zoneTexte = conteneurLigne.querySelector('.content');
 
-    if (imgUrl) {
-        contentDiv.innerHTML = `<img src="${imgUrl}" class="chat-img" style="max-width: 200px; border-radius: 8px; margin-bottom: 8px;"><br>`;
+    if (lienImage) {
+        zoneTexte.innerHTML = '<img src="' + lienImage + '" class="chat-img"><br>';
     }
 
-    let texteA_Afficher = contenu ? contenu : "";
+    var textePropre = texte ? texte : "";
 
-    if (appliquerStreaming && role === 'model') {
-        let contenuFormate = texteA_Afficher.replace(/\n/g, "<br>");
-        const fragments = contenuFormate.split(" ");
-        let i = 0;
+    if (effetTexte && role === 'model') {
+        // Remplacement correct des sauts de ligne pour préserver l'affichage aéré du menu
+        var texteFormate = textePropre.replace(/\n/g, " <br> ");
+        var fragments = texteFormate.split(" ");
+        var compteur = 0;
         
-        const interval = setInterval(() => {
-            if (i < fragments.length) {
-                contentDiv.innerHTML += fragments[i] + " ";
-                box.scrollTop = box.scrollHeight;
-                i++;
+        var minuterie = setInterval(function() {
+            if (compteur < fragments.length) {
+                if (fragments[compteur] === "<br>") {
+                    zoneTexte.innerHTML += "<br>";
+                } else {
+                    zoneTexte.innerHTML += fragments[compteur] + " ";
+                }
+                zoneChat.scrollTop = zoneChat.scrollHeight;
+                compteur++;
             } else {
-                clearInterval(interval);
-                // Affiche de manière sécurisée les boutons de choix fixes en bas de la page
-                if (activerBoutonsChoix) {
-                    const container = document.getElementById("choice-container");
-                    if (container) container.style.display = "flex";
-                    box.scrollTop = box.scrollHeight;
+                clearInterval(minuterie);
+                if (afficherBoutons) {
+                    var boutonsAction = document.getElementById("choice-container");
+                    if (boutonsAction) boutonsAction.className = "choice-box-visible";
+                    zoneChat.scrollTop = zoneChat.scrollHeight;
                 }
             }
         }, 20);
     } else {
-        contentDiv.innerHTML += `<div>${texteA_Afficher.replace(/\n/g, "<br>")}</div>`;
-        if (activerBoutonsChoix) {
-            const container = document.getElementById("choice-container");
-            if (container) container.style.display = "flex";
+        zoneTexte.innerHTML += '<div>' + textePropre.replace(/\n/g, "<br>") + '</div>';
+        if (afficherBoutons) {
+            var boutonsAction = document.getElementById("choice-container");
+            if (boutonsAction) boutonsAction.className = "choice-box-visible";
         }
-        box.scrollTop = box.scrollHeight;
+        zoneChat.scrollTop = zoneChat.scrollHeight;
     }
 }
 
-function forcerAlerteInsister(cmdId) {
-    if (!confirm("Signaler cette commande comme urgente au gérant ?")) return;
-    fetch(`/api/commande/${cmdId}/insister`, { method: "POST" })
-    .then(() => {
-        window.open(genererLienWhatsApp(`Urgence Commande Wa Ngoie Food #${cmdId}`), '_blank');
-        setTimeout(() => { window.location.reload(); }, 500);
+// Fonction pour le bouton d'alerte rouge "🚨 Insister"
+function forcerAlerteInsister(idCommande) {
+    if (!confirm("Voulez-vous signaler au gérant que votre plat tarde ?")) return;
+    
+    fetch("/api/commande/" + idCommande + "/insister", { 
+        method: "POST" 
+    })
+    .then(function() {
+        var texteUrgence = "Urgence : Ma commande Wa Ngoie Food #" + idCommande + " prend du retard !";
+        window.open(creerLienWhatsApp(texteUrgence), '_blank');
+        setTimeout(function() { 
+            window.location.reload(); 
+        }, 500);
     });
 }
 
-function afficherApercuImage(input) {
-    const conteneur = document.getElementById("imagePreviewContainer");
-    const image = document.getElementById("previewImg");
-    if (input.files && input.files) {
-        const reader = new FileReader();
-        reader.onload = function(e) { image.src = e.target.result; conteneur.style.display = "block"; };
-        reader.readAsDataURL(input.files);
+// Gestion de l'aperçu de la photo (reçu ou preuve de paiement)
+function afficherApercuImage(inputElement) {
+    var boiteApercu = document.getElementById("imagePreviewContainer");
+    var imageApercu = document.getElementById("previewImg");
+    
+    if (inputElement.files && inputElement.files[0]) {
+        var lecteurFichier = new FileReader();
+        lecteurFichier.onload = function(evenement) { 
+            imageApercu.src = evenement.target.result; 
+            boiteApercu.className = "preview-box-visible"; 
+        };
+        lecteurFichier.readAsDataURL(inputElement.files[0]);
     }
 }
 
+// Annuler la photo choisie
 function annulerApercuPhoto() {
-    const input = document.getElementById("imageInput");
-    const conteneur = document.getElementById("imagePreviewContainer");
-    if (input) input.value = "";
-    if (conteneur) conteneur.style.display = "none";
+    var inputFichier = document.getElementById("imageInput");
+    var boiteApercu = document.getElementById("imagePreviewContainer");
+    
+    if (inputFichier) inputFichier.value = "";
+    if (boiteApercu) boiteApercu.className = "preview-box-hidden";
 }
 
+// Reconnaissance vocale par le micro du téléphone / ordinateur
 function startVoiceRecognition() {
-    const micBtn = document.getElementById("micBtn");
-    const userInput = document.getElementById("userInput");
-    if (!('webkitSpeechRecognition' in window) && !('speechRecognition' in window)) return;
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = "fr-FR"; 
-    micBtn.innerHTML = "⏳ Écoute...";
-    recognition.start();
-    recognition.onresult = function(event) {
-        if (userInput && event.results.transcript) {
-            userInput.value = event.results.transcript;
+    var boutonMicro = document.getElementById("micBtn");
+    var champTexte = document.getElementById("userInput");
+    
+    if (!('webkitSpeechRecognition' in window) && !('speechRecognition' in window)) {
+        alert("La reconnaissance vocale n'est pas supportée par votre navigateur.");
+        return;
+    }
+    
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var reconnaissance = new SpeechRecognition();
+    reconnaissance.lang = "fr-FR"; 
+    
+    boutonMicro.innerHTML = "⏳ Écoute en cours...";
+    reconnaissance.start();
+    
+    reconnaissance.onresult = function(evenement) {
+        if (champTexte && evenement.results[0][0].transcript) {
+            champTexte.value = evenement.results[0][0].transcript;
             sendMessage();
         }
     };
-    recognition.onend = function() { micBtn.innerHTML = "🎙️ Vocale"; };
+    
+    reconnaissance.onend = function() { 
+        boutonMicro.innerHTML = "🎙️ Parler au micro"; 
+    };
 }

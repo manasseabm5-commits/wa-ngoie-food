@@ -1,53 +1,82 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container" style="max-width: 1200px; padding-bottom: 60px;">
-    <h2 style="color: #d4af37; text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);">📊 Tableau de Bord Wa Ngoie Food</h2>
-    <p class="menu-intro">Console administrative d'élite supervisée par ABM AI. Suivez, facturez et distribuez vos commandes à Kinshasa.</p>
+<div class="admin-container">
+    <div class="admin-header">
+        <div>
+            <h2 class="admin-main-title">📊 Tableau de Bord - Wa Ngoie Food</h2>
+            <p class="admin-subtitle">Espace de gestion des commandes et d'apprentissage pour l'assistant virtuel.</p>
+        </div>
+        <div class="admin-stats-badges">
+            <span class="badge-info">Anomalies en attente : <span id="stat-anomalies">{{ erreurs|length }}</span></span>
+            <span class="badge-success">Phrases apprises : <span>{{ total_corriges }}</span></span>
+        </div>
+    </div>
 
-    <h3 class="section-title">📦 Flux des Commandes en Cours</h3>
-    <div class="admin-table-container" style="margin-bottom: 50px; overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; background: rgba(30, 30, 32, 0.5);">
+    <!-- Section du flux des commandes vivantes -->
+    <h3 class="section-title">📦 Commandes en temps réel</h3>
+    <div class="table-scroll-container">
+        <table class="admin-table">
             <thead>
-                <tr style="background-color: #1e1e20; color: #d4af37;">
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid #2f2f32;">ID</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid #2f2f32;">Client & Contact</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid #2f2f32;">Adresse Livraison</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid #2f2f32;">Détail Panier</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid #2f2f32;">Total Brut</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid #2f2f32;">Frais & Courseurs (Calculatrice)</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid #2f2f32;">Actions Élite</th>
+                <tr>
+                    <th>ID</th>
+                    <th>Client & Contact</th>
+                    <th>Lieu de livraison</th>
+                    <th>Plats demandés</th>
+                    <th>Prix Total</th>
+                    <th>Actions gérant</th>
                 </tr>
             </thead>
             <tbody id="admin-table-body">
                 <tr>
-                    <td colspan="7" style="text-align: center; color: #c4c7c5; padding: 25px;">Connexion au serveur Wa Ngoie Food en cours...</td>
+                    <td colspan="6" class="table-loading-text">Connexion au flux des commandes en cours...</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <h3 class="section-title">⚙️ Hub d'Apprentissage Continu ABM AI</h3>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px; margin-top: 25px;">
+    <!-- Section d'éducation et dressage de l'IA locale -->
+    <h3 class="section-title">⚙️ Apprentissage de l'Assistant ABM AI</h3>
+    <div class="admin-ia-grid">
         
-        <div style="background: rgba(43, 42, 51, 0.4); padding: 25px; border-radius: 12px; border: 1px solid #2f2f32; max-height: 450px; overflow-y: auto;">
-            <h4 style="color: #ef4444; margin-top: 0; margin-bottom: 15px;">❌ Messages non assimilés par l'IA</h4>
-            <p style="font-size: 13px; color: #c4c7c5; margin-bottom: 15px;">Sélectionnez une anomalie ci-dessous pour injecter la correction logique dans le cerveau de l'IA.</p>
-            <div id="logs-incomprehension" style="display: flex; flex-direction: column; gap: 12px;"></div>
+        <!-- Bloc des messages incompris -->
+        <div class="ia-panel panel-errors">
+            <h4 class="panel-title-red">❌ Phrases non comprises par l'IA</h4>
+            <p class="panel-desc">Sélectionnez un message reçu pour lui apprendre la réponse idéale.</p>
+            
+            <div id="logs-incomprehension" class="logs-stack">
+                {% for err in erreurs %}
+                <!-- Correction d'expert avec guillemets simples et échappement safe pour effacer l'alerte VS Code -->
+                <div class="log-card" onclick="chargerErreurDansFormulaire('{{ err.message_client | tojson | safe }}')">
+                    <div class="log-card-header">
+                        <span>📱 {{ err.telephone_client }}</span>
+                        <span>⏱️ {{ err.date_signalement.strftime('%H:%M') }}</span>
+                    </div>
+                    <div class="log-card-text">"{{ err.message_client }}"</div>
+                </div>
+                {% else %}
+                <div class="log-empty-text">
+                    🎉 L'assistant a compris tous les messages reçus jusqu'à présent !
+                </div>
+                {% endfor %}
+            </div>
         </div>
 
-        <div style="background: rgba(43, 42, 51, 0.4); padding: 25px; border-radius: 12px; border: 1px solid #2f2f32;">
-            <h4 style="color: #25d366; margin-top: 0; margin-bottom: 15px;">📝 Dresser la Base de Connaissances</h4>
-            <form id="form-training-ia" onsubmit="soumettreEntrainementIA(event)" style="display: flex; flex-direction: column; gap: 15px;">
-                <div>
-                    <label style="display:block; margin-bottom:5px; font-size:13px; color:#c4c7c5;">Phrase ou faute de l'utilisateur :</label>
-                    <input type="text" id="train-input-field" required style="background: #1e1e20; border: 1px solid #2f2f32; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing:border-box; outline:none;" placeholder="Ex: je veu un chouarma">
+        <!-- Formulaire d'injection de connaissances -->
+        <div class="ia-panel panel-form">
+            <h4 class="panel-title-green">📝 Lui apprendre une nouvelle phrase</h4>
+            <p class="panel-desc">Associez un mot, une faute d'orthographe ou une expression de Kinshasa à une réponse.</p>
+            
+            <form id="form-training-ia" onsubmit="soumettreEntrainementIA(event)" class="ia-form">
+                <div class="form-group">
+                    <label class="form-label">Phrase ou faute écrite par le client :</label>
+                    <input type="text" id="train-input-field" required class="form-input" placeholder="Ex: je veu un chouarma">
                 </div>
-                <div>
-                    <label style="display:block; margin-bottom:5px; font-size:13px; color:#c4c7c5;">Réponse chaleureuse à associer :</label>
-                    <textarea id="train-reply-field" required rows="3" style="background: #1e1e20; border: 1px solid #2f2f32; color: #fff; padding: 12px; border-radius: 6px; resize: none; width: 100%; box-sizing:border-box; outline:none;" placeholder="Mboté ! C'est enregistré. Un délicieux Chawarma croustillant à 14.000 FC..."></textarea>
+                <div class="form-group">
+                    <label class="form-label">Réponse claire à lui donner :</label>
+                    <textarea id="train-reply-field" required rows="3" class="form-textarea" placeholder="Mboté ! C'est noté. Un chawarma croustillant à 14.000 FC..."></textarea>
                 </div>
-                <button type="submit" style="background-color: #25d366; color: #131314; font-weight: bold; padding: 14px; border:none; border-radius: 6px; width: 100%; cursor:pointer; font-size:14px; transition:background 0.2s;">
-                    💾 Enregistrer définitivement dans l'IA
+                <button type="submit" class="btn-submit-green">
+                    💾 Enregistrer dans la mémoire de l'IA
                 </button>
             </form>
         </div>
@@ -57,147 +86,124 @@
 <script>
     let ancienneQuantiteCommandes = 0;
     let commandesDejaInsistees = new Set();
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    function emettreSonNouvelleCommande() {
-        const gain = audioContext.createGain();
-        gain.connect(audioContext.destination);
-        gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-        const osc1 = audioContext.createOscillator();
-        osc1.connect(gain);
-        osc1.frequency.setValueAtTime(523.25, audioContext.currentTime);
-        osc1.start();
-        osc1.stop(audioContext.currentTime + 0.12);
-        setTimeout(() => {
-            const osc2 = audioContext.createOscillator();
-            osc2.connect(gain);
-            osc2.frequency.setValueAtTime(659.25, audioContext.currentTime);
-            osc2.start();
-            osc2.stop(audioContext.currentTime + 0.2);
-        }, 130);
+    function jouerSonNouvelleCommande() {
+        const gainNode = audioCtx.createGain();
+        gainNode.connect(audioCtx.destination);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        const osc = audioCtx.createOscillator();
+        osc.connect(gainNode);
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
     }
 
-    function emettreSonClientInsiste() {
-        const gain = audioContext.createGain();
-        gain.connect(audioContext.destination);
-        gain.gain.setValueAtTime(0.4, audioContext.currentTime);
-        const osc1 = audioContext.createOscillator();
-        osc1.connect(gain);
-        osc1.type = "sawtooth";
-        osc1.frequency.setValueAtTime(440, audioContext.currentTime);
-        osc1.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.2);
-        osc1.start();
-        osc1.stop(audioContext.currentTime + 0.25);
-        setTimeout(() => {
-            const osc2 = audioContext.createOscillator();
-            osc2.connect(gain);
-            osc2.type = "sawtooth";
-            osc2.frequency.setValueAtTime(440, audioContext.currentTime);
-            osc2.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.2);
-            osc2.start();
-            osc2.stop(audioContext.currentTime + 0.25);
-        }, 300);
+    function jouerSonClientInsiste() {
+        const gainNode = audioCtx.createGain();
+        gainNode.connect(audioCtx.destination);
+        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        const osc = audioCtx.createOscillator();
+        osc.type = "sawtooth";
+        osc.connect(gainNode);
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.25);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        chargerFluxCommandesAdmin(true); 
-        chargerLogsIncomprehension();
-        setInterval(() => { chargerFluxCommandesAdmin(false); }, 5000);
-    });
+    function chargerErreurDansFormulaire(phraseJson) {
+        var caseSaisie = document.getElementById("train-input-field");
+        var caseReponse = document.getElementById("train-reply-field");
+        if (caseSaisie && caseReponse) {
+            var textePur = JSON.parse(phraseJson);
+            caseSaisie.value = textePur;
+            caseReponse.focus();
+        }
+    }
 
-    function chargerFluxCommandesAdmin(estPremierChargement) {
+    function soumettreEntrainementIA(event) {
+        event.preventDefault();
+        const inputField = document.getElementById("train-input-field");
+        const replyField = document.getElementById("train-reply-field");
+        
+        const formData = new FormData();
+        formData.append("phrase", inputField.value);
+        formData.append("reponse", replyField.value);
+
+        fetch('/admin/ia/entrainer', { method: "POST", body: formData })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert("Apprentissage validé !");
+                window.location.reload();
+            }
+        });
+    }
+
+    function changerStatut(cmdId, element) {
+        fetch(`/admin/commande/${cmdId}/statut/${element.value}`, { method: "POST" });
+    }
+
+    function supprimerCommande(cmdId) {
+        if (!confirm("Supprimer définitivement cette commande de l'écran ?")) return;
+        fetch(`/admin/commande/${cmdId}/supprimer`, { method: "POST" })
+        .then(res => res.json())
+        .then(data => { if (data.status === "success") window.location.reload(); });
+    }
+
+    function rafraichirFluxCommandes(estPremierAcces) {
         fetch('/admin/commandes')
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.getElementById("admin-table-body");
-                if (!tbody) return;
-                if (!estPremierChargement && data.length > ancienneQuantiteCommandes) {
-                    emettreSonNouvelleCommande();
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById("admin-table-body");
+            if (!tbody) return;
+            
+            if (!estPremierAcces && data.length > ancienneQuantiteCommandes) {
+                jouerSonNouvelleCommande();
+            }
+            ancienneQuantiteCommandes = data.length;
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="table-empty-row">⏳ Aucune commande reçue aujourd'hui.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = "";
+            data.forEach(cmd => {
+                if (cmd.status === "Client Insiste !" && !commandesDejaInsistees.has(cmd.id)) {
+                    jouerSonClientInsiste();
+                    commandesDejaInsistees.add(cmd.id);
                 }
-                ancienneQuantiteCommandes = data.length;
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 30px; font-weight:bold;">⏳ Aucune commande active reçue aujourd'hui.</td></tr>`;
-                    return;
-                }
-                tbody.innerHTML = "";
-                data.forEach(cmd => {
-                    if (cmd.status === "Client Insiste !" && !commandesDejaInsistees.has(cmd.id)) {
-                        emettreSonClientInsiste();
-                        commandesDejaInsistees.add(cmd.id);
-                    }
-                    const tr = document.createElement("tr");
-                    tr.style.borderBottom = "1px solid #2f2f32";
-                    if (cmd.status === "Client Insiste !") tr.style.background = "rgba(239, 68, 68, 0.15)";
-                    tr.innerHTML = `
-                        <td style="padding: 12px;"><strong>#${cmd.id}</strong></td>
-                        <td style="padding: 12px;">👤 ${cmd.username}<br><span style="color:#25d366; font-size:12px;">📱 ${cmd.phone}</span></td>
-                        <td style="padding: 12px; font-size:13px; max-width:180px; word-wrap:break-word;">📍 ${cmd.adresse}</td>
-                        <td style="padding: 12px; color:#fff; font-weight:500;">${cmd.plats.join(", ").toUpperCase()}</td>
-                        <td style="padding: 12px; font-weight:bold; color:#38bdf8;">${cmd.total} FC</td>
-                        <td style="padding: 12px;">
-                            <div style="display:flex; flex-direction:column; gap:6px;">
-                                <div><span style="font-size:11px; color:#c4c7c5;">Frais (FC) :</span> <input type="number" id="frais-${cmd.id}" value="${cmd.frais_livraison}" oninput="calculerTotalInstantaneAdmin(${cmd.id}, ${cmd.total})" style="width: 90px; background: #1e1e20; border:1px solid #2f2f32; color:#fff; padding:4px; border-radius:4px; text-align:center;"></div>
-                                <div><span style="font-size:11px; color:#c4c7c5;">Livreur :</span> <select id="livreur-${cmd.id}" style="background: #1e1e20; border:1px solid #2f2f32; color:#fff; padding:4px; border-radius:4px; font-size:12px;"><option value="Non assigné" ${cmd.livreur === 'Non assigné' ? 'selected' : ''}>❌ Non assigné</option><option value="Serge" ${cmd.livreur === 'Serge' ? 'selected' : ''}>🏍️ Serge</option><option value="Christian" ${cmd.livreur === 'Christian' ? 'selected' : ''}>🏍️ Christian</option><option value="Doudou" ${cmd.livreur === 'Doudou' ? 'selected' : ''}>🏍️ Doudou</option></select></div>
-                                <div><span style="font-size:11px; color:#c4c7c5;">Statut :</span> <select id="statut-${cmd.id}" style="background: #1e1e20; border:1px solid #2f2f32; color:#fff; padding:4px; border-radius:4px; font-size:12px;"><option value="En attente" ${cmd.status === 'En attente' ? 'selected' : ''}>⏳ En attente</option><option value="Client Insiste !" ${cmd.status === 'Client Insiste !' ? 'selected' : ''}>🚨 Client Insiste !</option><option value="En cuisine" ${cmd.status === 'En cuisine' ? 'selected' : ''}>🍳 En cuisine</option><option value="En livraison" ${cmd.status === 'En livraison' ? 'selected' : ''}>🏍️ En livraison</option><option value="Livré" ${cmd.status === 'Livré' ? 'selected' : ''}>✅ Livré</option></select></div>
-                                <span id="total-final-${cmd.id}" style="color:#25d366; font-weight:bold; font-size:13px; margin-top:2px;">Net : ${cmd.total_final} FC</span>
-                            </div>
-                        </td>
-                        <td style="padding: 12px;">
-                            <div style="display:flex; flex-direction:column; gap:6px;">
-                                <button onclick="sauvegarderLogistiqueAdmin(${cmd.id})" style="background:#25d366; color:#131314; font-weight:bold; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:12px;">💾 Sauver</button>
-                                <button onclick="supprimerCommandeAdmin(${cmd.id})" style="background:#ef4444; color:#fff; font-weight:bold; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:12px;">🗑️ Supprimer</button>
-                            </div>
-                        </td>`;
-                    tbody.appendChild(tr);
-                });
-            });
-    }
 
-    function calculerTotalInstantaneAdmin(id, totalBrut) {
-        const frais = parseFloat(document.getElementById(`frais-${id}`).value) || 0;
-        document.getElementById(`total-final-${id}`).innerText = `Net : ${totalBrut + frais} FC`;
-    }
-
-    function sauvegarderLogistiqueAdmin(id) {
-        fetch(`/admin/commandes/${id}/action`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ action: 'mettre_a_jour', frais: parseFloat(document.getElementById(`frais-${id}`).value)||0, statut: document.getElementById(`statut-${id}`).value, livreur: document.getElementById(`livreur-${id}`).value })
-        }).then(res => res.json()).then(data => { if(data.success) { alert("Données logistiques synchronisées !"); chargerFluxCommandesAdmin(true); }});
-    }
-
-    function supprimerCommandeAdmin(id) {
-        if (!confirm("Archiver cette commande ?")) return;
-        fetch(`/admin/commandes/${id}/action`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ action: 'supprimer' })
-        }).then(res => res.json()).then(data => { if (data.success) chargerFluxCommandesAdmin(true); });
-    }
-
-    function chargerLogsIncomprehension() {
-        const container = document.getElementById('logs-incomprehension');
-        if (!container) return;
-        container.innerHTML = "";
-        fetch('/admin/get-errors').then(res => res.json()).then(data => {
-            if (data.length === 0) { container.innerHTML = `<div style="text-align:center; color:#747775; padding:20px; font-size:13px;">✨ Aucun message non compris.</div>`; return; }
-            data.forEach(item => {
-                const div = document.createElement('div');
-                div.style.cssText = "background:#1e1e20; border:1px solid #2f2f32; padding:12px; border-radius:8px; cursor:pointer;";
-                div.innerHTML = `<strong style="color:#fff; font-size:13px;">"${item.input}"</strong><br><small style="color:#ef4444; font-size:11px;">Statut : ${item.reponse}</small>`;
-                div.onclick = () => { document.getElementById('train-input-field').value = item.input; document.getElementById('train-reply-field').focus(); };
-                container.appendChild(div);
+                const tr = document.createElement("tr");
+                if (cmd.status === "Client Insiste !") tr.className = "row-urgent";
+                
+                tr.innerHTML = `
+                    <td><strong>#${cmd.id}</strong></td>
+                    <td>👤 ${cmd.username}<br><span class="table-wa-phone">📱 ${cmd.phone}</span></td>
+                    <td>📍 ${cmd.adresse}</td>
+                    <td class="table-basket-cell">${cmd.contenu}</td>
+                    <td><strong>${parseInt(cmd.total_final).toLocaleString()} FC</strong></td>
+                    <td>
+                        <select onchange="changerStatut(${cmd.id}, this)" class="table-select-status">
+                            <option value="En attente" ${cmd.status === 'En attente' ? 'selected' : ''}>En attente</option>
+                            <option value="En cuisine" ${cmd.status === 'En cuisine' ? 'selected' : ''}>En cuisine</option>
+                            <option value="En route" ${cmd.status === 'En route' ? 'selected' : ''}>En route</option>
+                            <option value="Livré" ${cmd.status === 'Livré' ? 'selected' : ''}>Livré</option>
+                            <option value="Client Insiste !" ${cmd.status === 'Client Insiste !' ? 'selected' : ''}>🚨 Client Insiste !</option>
+                        </select>
+                        <button onclick="supprimerCommande(${cmd.id})" class="btn-table-delete">Supprimer</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             });
         });
     }
 
-    function soumettreEntrainementIA(e) {
-        e.preventDefault();
-        fetch('/admin/train-ia', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ input: document.getElementById('train-input-field').value, reply: document.getElementById('train-reply-field').value })
-        }).then(res => res.json()).then(data => { if (data.success) { alert("Règle assimilée !"); document.getElementById('train-input-field').value = ""; document.getElementById('train-reply-field').value = ""; chargerLogsIncomprehension(); }});
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+        rafraichirFluxCommandes(true);
+        setInterval(() => { rafraichirFluxCommandes(false); }, 5000);
+    });
 </script>
 {% endblock %}

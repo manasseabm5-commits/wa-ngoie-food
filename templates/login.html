@@ -1,29 +1,27 @@
-<!-- templates/login.html -->
 {% extends 'base.html' %}
 {% block content %}
-<div class="container" style="max-width: 400px; margin: 40px auto; padding: 25px; background: rgba(30,30,32,0.85); border-radius:12px; box-sizing: border-box; border: 1px solid #2f2f32;">
-    <h2 style="color: #38bdf8; text-align: center; margin-bottom: 20px; text-transform: uppercase; font-size: 20px; letter-spacing: 0.5px;">Espace Connexion</h2>
-    <p class="menu-intro" style="text-align: center; font-size: 13px; line-height: 1.5; margin-bottom: 25px; color: #c4c7c5;">Identifiez-vous pour accéder au chat multimodal ABM AI ou au panneau d'administration [index].</p>
+<div class="auth-box">
+    <h2 class="auth-title">Connexion</h2>
+    <p class="auth-subtitle">Connectez-vous pour commander vos plats ou ouvrir le panneau de gestion.</p>
     
-    <form action="{{ url_for('login') }}" method="POST" style="display: flex; flex-direction: column; gap: 20px;">
-        <div>
-            <label style="display: block; margin-bottom: 6px; font-size: 14px; color: #c4c7c5; font-weight: 500;">Nom d'utilisateur</label>
-            <input type="text" name="username" placeholder="Votre nom d'utilisateur ou 'admin'" required autocomplete="username" autocapitalize="none" autocorrect="off"
-                   style="width: 100%; box-sizing: border-box; background: #1e1e20; border: 1px solid #2f2f32; color: #fff; padding: 12px 16px; border-radius: 8px; outline: none; font-size: 14px; transition: border-color 0.2s;">
+    <form action="{{ url_for('login') }}" method="POST" class="auth-form">
+        <div class="form-group">
+            <label class="form-label">Nom d'utilisateur</label>
+            <input type="text" name="username" placeholder="Ex: admin ou votre nom" required autocomplete="username" autocapitalize="none" autocorrect="off" class="form-input">
         </div>
         
-        <div>
-            <label style="display: block; margin-bottom: 6px; font-size: 14px; color: #c4c7c5; font-weight: 500;">Mot de passe</label>
-            <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password"
-                   style="width: 100%; box-sizing: border-box; background: #1e1e20; border: 1px solid #2f2f32; color: #fff; padding: 12px 16px; border-radius: 8px; outline: none; font-size: 14px;">
+        <div class="form-group">
+            <label class="form-label">Mot de passe</label>
+            <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password" class="form-input">
         </div>
         
-        <button type="submit" class="cta-btn" style="width: 100%; border: none; padding: 14px; background-color: #25d366; box-shadow: 0 0 15px rgba(37,211,102,0.3); color: #131314; cursor: pointer; text-align: center; margin-top: 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 8px; font-weight: bold;">
-            🔐 Entrer dans l'application
+        <button type="submit" class="btn-submit">
+             Entrer dans l'application
         </button>
     </form>
-    <p style="text-align: center; font-size: 13px; color: #c4c7c5; margin-top: 20px; margin-bottom: 0;">
-        Nouveau client ? <a href="{{ url_for('register') }}" style="color: #38bdf8; text-decoration: none; font-weight: bold;">Créez un compte ici</a>
+    
+    <p class="auth-footer-text">
+        Nouveau ici ? <a href="{{ url_for('register') }}" class="auth-link">Créez un compte ici</a>
     </p>
 </div>
 {% endblock %}
